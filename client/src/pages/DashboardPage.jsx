@@ -61,6 +61,30 @@ const dayCards = [
       { name: 'Weekly reset', done: true },
     ],
   },
+  {
+    day: 'Saturday',
+    date: '27.01.2026',
+    progress: 74,
+    tasks: [
+      { name: 'Morning stretch', done: true },
+      { name: 'Laundry + cleanup', done: true },
+      { name: 'Meal prep', done: false },
+      { name: 'Read 30 minutes', done: true },
+      { name: 'Plan next week', done: false },
+    ],
+  },
+  {
+    day: 'Sunday',
+    date: '28.01.2026',
+    progress: 88,
+    tasks: [
+      { name: 'Weekly reflection', done: true },
+      { name: 'Reset workspace', done: true },
+      { name: 'Family call', done: true },
+      { name: 'Deadline review', done: false },
+      { name: 'Early bedtime', done: true },
+    ],
+  },
 ]
 
 const upcomingTasks = [

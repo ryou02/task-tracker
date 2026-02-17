@@ -10,7 +10,7 @@
   background-size: 30px 30px, 30px 30px, auto, auto;
   color: #3d3a32;
   font-family: 'Manrope', sans-serif;
-  padding: 120px 22px 40px;
+  padding: 92px 22px 40px;
 }
 
 .deadlines {
@@ -186,7 +186,7 @@
 
 @media (max-width: 900px) {
   .deadlines-page {
-    padding-top: 96px;
+    padding-top: 80px;
   }
 
   .deadlines__composer {
