@@ -1,17 +1,12 @@
 import './HomePage.css'
+import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 
 function HomePage() {
+  const navItems = [{ name: 'Home', link: '/' }]
+
   return (
     <div className="homepage">
-      <header className="homepage__nav">
-        <div className="homepage__brand">taskflow</div>
-        <nav className="homepage__links" aria-label="Homepage navigation">
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#about">About</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-      </header>
+      <FloatingNav navItems={navItems} />
 
       <section className="homepage__hero">
         <h1 className="homepage__headline">

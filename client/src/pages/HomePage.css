@@ -23,37 +23,10 @@
   font-family: 'Manrope', sans-serif;
 }
 
-.homepage__nav {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.homepage__brand {
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.02em;
-}
-
-.homepage__links {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.homepage__links a {
-  color: var(--text-soft);
-  text-decoration: none;
-  font-weight: 600;
-}
-
 .homepage__hero {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 54px 28px 40px;
+  padding: 124px 28px 40px;
 }
 
 .homepage__headline {
@@ -206,14 +179,5 @@
 @media (max-width: 900px) {
   .homepage__lower-inner {
     grid-template-columns: 1fr;
-  }
-
-  .homepage__nav {
-    padding-top: 18px;
-  }
-
-  .homepage__links {
-    gap: 12px;
-    font-size: 0.92rem;
   }
 }
