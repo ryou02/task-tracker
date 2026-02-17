@@ -5,16 +5,19 @@ import DeadlinesPage from './pages/DeadlinesPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import AppShell from './compoenets/AppShell.jsx'
+import ProtectedRoute from './compoenets/ProtectedRoute.jsx'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route element={<AppShell />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/deadlines" element={<DeadlinesPage />} />
-        <Route path="/daily" element={<DailyPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/deadlines" element={<DeadlinesPage />} />
+          <Route path="/daily" element={<DailyPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

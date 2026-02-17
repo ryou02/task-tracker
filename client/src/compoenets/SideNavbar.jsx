@@ -1,7 +1,16 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthProvider'
 import './SideNavbar.css'
 
 function SideNavbar() {
+  const navigate = useNavigate()
+  const { signOut } = useAuth()
+
+  async function handleLogout() {
+    await signOut()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <aside className="side-navbar" aria-label="App navigation">
       <div className="side-navbar__inner">
@@ -19,7 +28,7 @@ function SideNavbar() {
           </NavLink>
         </nav>
 
-        <button type="button" className="side-navbar__logout">
+        <button type="button" className="side-navbar__logout" onClick={handleLogout}>
           Log out
         </button>
       </div>
