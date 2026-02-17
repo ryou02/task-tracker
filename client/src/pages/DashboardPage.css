@@ -219,17 +219,16 @@
   letter-spacing: 0.04em;
 }
 
-.dashboard-upcoming__table tbody td:nth-child(odd) {
+.dashboard-upcoming__table tbody tr:nth-child(odd) td {
   background: #fbf7f0;
 }
 
-.dashboard-upcoming__table tbody td:nth-child(even) {
+.dashboard-upcoming__table tbody tr:nth-child(even) td {
   background: #f1e7d8;
 }
 
 .dashboard-days-cell {
   text-align: center;
-  background: transparent !important;
   font-weight: 500;
 }
 
