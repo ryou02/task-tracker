@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Ephesis&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,600&display=swap');
+
+:root {
+  --bg-cream: #f4f1ea;
+  --bg-paper: #faf7f2;
+  --text-ink: #3d3a32;
+  --text-soft: #6f6b61;
+  --accent-clay: #c86f45;
+  --accent-clay-deep: #af5a35;
+  --line-soft: rgba(61, 58, 50, 0.08);
+  --dark-panel: #131416;
+}
+
+.homepage {
+  min-height: 100vh;
+  background:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px),
+    radial-gradient(circle at 85% 15%, #fff7ed 0%, transparent 28%),
+    var(--bg-cream);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  color: var(--text-ink);
+  font-family: 'Manrope', sans-serif;
+}
+
+.homepage__nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.homepage__brand {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.homepage__links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.homepage__links a {
+  color: var(--text-soft);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.homepage__hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 54px 28px 40px;
+}
+
+.homepage__headline {
+  margin: 0;
+  max-width: 950px;
+  font-size: clamp(2.2rem, 8vw, 6.3rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.homepage__headline-accent {
+  display: inline-block;
+  margin-left: 0.25ch;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.homepage__headline-highlight {
+  color: var(--accent-clay);
+}
+
+.homepage__headline-squiggle {
+  display: inline-block;
+  margin-left: 0.2ch;
+  font-family: 'Ephesis', cursive;
+  font-size: 1.18em;
+  font-weight: 400;
+}
+
+.homepage__subtitle {
+  max-width: 720px;
+  margin-top: 28px;
+  font-size: clamp(1.05rem, 2.4vw, 1.9rem);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.homepage__actions {
+  margin-top: 36px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.homepage__button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.homepage__button--primary {
+  background: var(--accent-clay);
+  color: #fff;
+  box-shadow: 0 7px 24px rgba(200, 111, 69, 0.35);
+}
+
+.homepage__button--primary:hover {
+  background: var(--accent-clay-deep);
+}
+
+.homepage__button--ghost {
+  background: var(--bg-paper);
+  color: var(--text-ink);
+  border: 1px solid rgba(61, 58, 50, 0.15);
+}
+
+.homepage__badges {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--text-soft);
+  font-size: 0.98rem;
+}
+
+.homepage__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.homepage__badge-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-clay);
+}
+
+.homepage__lower {
+  margin-top: 32px;
+  background: var(--dark-panel);
+  color: #f2f0ed;
+  border-top-left-radius: 26px;
+  border-top-right-radius: 26px;
+  padding: 44px 28px 54px;
+}
+
+.homepage__lower-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+}
+
+.homepage__lower-title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  line-height: 0.95;
+}
+
+.homepage__lower-copy {
+  margin-top: 20px;
+  color: #b8b7b4;
+  max-width: 560px;
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.homepage__menu {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 18px;
+  align-self: start;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.homepage__menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 1.05rem;
+}
+
+.homepage__menu-item:last-child {
+  border-bottom: 0;
+}
+
+.homepage__menu-item span:last-child {
+  color: #9a9893;
+}
+
+@media (max-width: 900px) {
+  .homepage__lower-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .homepage__nav {
+    padding-top: 18px;
+  }
+
+  .homepage__links {
+    gap: 12px;
+    font-size: 0.92rem;
+  }
+}
