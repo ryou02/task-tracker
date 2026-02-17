@@ -26,9 +26,6 @@ function HomePage() {
           <button type="button" className="homepage__button homepage__button--primary">
             Start Planning
           </button>
-          <button type="button" className="homepage__button homepage__button--ghost">
-            See Demo
-          </button>
         </div>
 
         <div className="homepage__badges">
@@ -42,7 +39,7 @@ function HomePage() {
           </div>
           <div className="homepage__badge">
             <span className="homepage__badge-dot" />
-            <span>Clean responsive dashboard</span>
+            <span>Clean responsive dashboard with graphs</span>
           </div>
         </div>
       </section>

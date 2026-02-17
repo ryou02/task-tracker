@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Ephesis&display=swap');
+
+.deadlines-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(61, 58, 50, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 58, 50, 0.07) 1px, transparent 1px),
+    radial-gradient(circle at 82% 12%, #fff7ed 0%, transparent 28%),
+    #f4f1ea;
+  background-size: 30px 30px, 30px 30px, auto, auto;
+  color: #3d3a32;
+  font-family: 'Manrope', sans-serif;
+  padding: 120px 22px 40px;
+}
+
+.deadlines {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.deadlines__header {
+  margin-bottom: 26px;
+}
+
+.deadlines__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #7a7568;
+}
+
+.deadlines__title {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 6vw, 4.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.deadlines__title-squiggle {
+  font-family: 'Ephesis', cursive;
+  font-size: 1.14em;
+  color: #c86f45;
+  margin-left: 0.25ch;
+}
+
+.deadlines__subtitle {
+  margin: 16px 0 0;
+  max-width: 760px;
+  color: #6f6b61;
+  font-size: 1.05rem;
+}
+
+.deadlines__composer {
+  display: grid;
+  grid-template-columns: 160px 1fr 220px 130px;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.deadlines__composer select,
+.deadlines__composer input,
+.deadlines__composer button {
+  border-radius: 12px;
+  border: 1px solid rgba(61, 58, 50, 0.16);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.deadlines__composer select,
+.deadlines__composer input {
+  background: #faf7f2;
+  color: #3d3a32;
+}
+
+.deadlines__composer button {
+  border: none;
+  background: #c86f45;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.deadlines__composer button:hover {
+  background: #af5a35;
+}
+
+.deadlines__table-wrap {
+  border: 1px solid rgba(61, 58, 50, 0.16);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #faf7f2;
+  box-shadow: 0 20px 35px rgba(61, 58, 50, 0.08);
+}
+
+.deadlines__table-title {
+  background: linear-gradient(135deg, #c86f45, #af5a35);
+  color: #fff8f1;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+  letter-spacing: -0.01em;
+  padding: 14px 18px;
+}
+
+.deadlines__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.deadlines__table th,
+.deadlines__table td {
+  padding: 12px 10px;
+  border: 1px solid rgba(93, 80, 66, 0.16);
+  font-size: 1.03rem;
+}
+
+.deadlines__table thead th {
+  background: #efe6d7;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+.deadlines__table tbody tr:nth-child(odd) {
+  background: #f8f3ea;
+}
+
+.deadlines__table tbody tr:nth-child(even) {
+  background: #f1e9dc;
+}
+
+.deadlines__subject-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 118px;
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 4px 12px;
+  text-transform: lowercase;
+}
+
+.deadlines__subject-pill--mat136 {
+  color: #fdf7f4;
+  background: #b53322;
+}
+
+.deadlines__subject-pill--mat223 {
+  color: #2e6f52;
+  background: #c9e3ba;
+}
+
+.deadlines__subject-pill--soc100 {
+  color: #275e9f;
+  background: #c5dcf6;
+}
+
+.deadlines__subject-pill--other {
+  color: #3d3a32;
+  background: #dddeda;
+}
+
+.deadlines__days-cell {
+  text-align: center;
+  font-weight: 800;
+}
+
+.deadlines__days-cell--late {
+  background: #edd4d2;
+  color: #8b2418;
+}
+
+.deadlines__days-cell--soon {
+  background: #f0d1cd;
+  color: #8b2418;
+}
+
+.deadlines__days-cell--upcoming {
+  background: #ccd8eb;
+  color: #2f4d73;
+}
+
+@media (max-width: 900px) {
+  .deadlines-page {
+    padding-top: 96px;
+  }
+
+  .deadlines__composer {
+    grid-template-columns: 1fr;
+  }
+
+  .deadlines__table-wrap {
+    overflow-x: auto;
+  }
+
+  .deadlines__table {
+    min-width: 760px;
+  }
+}
