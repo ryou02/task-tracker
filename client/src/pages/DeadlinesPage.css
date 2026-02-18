@@ -222,14 +222,9 @@
   background: #f1e9dc;
 }
 
-.deadlines__row--selected {
-  position: relative;
-  outline: 2px solid rgba(200, 111, 69, 0.45);
-  outline-offset: -2px;
-}
-
 .deadlines__editable-cell {
   cursor: pointer;
+  position: relative;
 }
 
 .deadlines__subject-pill {
@@ -327,12 +322,26 @@
   cursor: pointer;
   z-index: 4;
   padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
 }
 
 .deadlines__trash-btn img {
   width: 14px;
   height: 14px;
   object-fit: contain;
+}
+
+.deadlines__table tbody tr:hover .deadlines__trash-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deadlines__subject-menu--row {
+  top: calc(100% + 6px);
+  left: 8px;
+  width: 220px;
 }
 
 .deadlines__modal-backdrop {

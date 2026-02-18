@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import trashIcon from '../assets/trash.png'
 import { supabase } from '../lib/supabase'
@@ -50,9 +50,10 @@ function DeadlinesPage() {
   const [deadlinesRows, setDeadlinesRows] = useState([])
   const [deadlinesError, setDeadlinesError] = useState('')
   const [addingTask, setAddingTask] = useState(false)
-  const [selectedDeadlineId, setSelectedDeadlineId] = useState(null)
+  const [subjectMenuRowId, setSubjectMenuRowId] = useState(null)
   const [editingCell, setEditingCell] = useState(null)
   const [assignmentDraft, setAssignmentDraft] = useState('')
+  const dueInputRefs = useRef({})
 
   const [subjectModalOpen, setSubjectModalOpen] = useState(false)
   const [subjectDrafts, setSubjectDrafts] = useState([])
@@ -170,9 +171,7 @@ function DeadlinesPage() {
       setDeadlinesError(error.message)
       return
     }
-    if (selectedDeadlineId === deadlineId) {
-      setSelectedDeadlineId(null)
-    }
+    if (subjectMenuRowId === deadlineId) setSubjectMenuRowId(null)
     if (editingCell?.id === deadlineId) setEditingCell(null)
     await loadDeadlines()
   }
@@ -301,7 +300,7 @@ function DeadlinesPage() {
   function handlePageClick(event) {
     const clickedTaskRow = event.target.closest('.deadlines__table tbody tr')
     if (!clickedTaskRow) {
-      setSelectedDeadlineId(null)
+      setSubjectMenuRowId(null)
       setEditingCell(null)
     }
   }
@@ -420,67 +419,86 @@ function DeadlinesPage() {
                 </tr>
               ) : (
                 deadlinesRows.map((item) => (
-                  <tr
-                    key={item.id}
-                    className={selectedDeadlineId === item.id ? 'deadlines__row--selected' : ''}
-                    onClick={() => setSelectedDeadlineId(item.id)}
-                  >
+                  <tr key={item.id}>
                     <td
                       className="deadlines__editable-cell"
                       onClick={(event) => {
                         event.stopPropagation()
-                        setSelectedDeadlineId(item.id)
-                        setEditingCell({ id: item.id, field: 'subject' })
+                        setSubjectMenuRowId((previous) => (previous === item.id ? null : item.id))
                       }}
                     >
-                      {selectedDeadlineId === item.id ? (
-                        <button
-                          type="button"
-                          className="deadlines__trash-btn"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            deleteDeadline(item.id)
-                          }}
-                          aria-label="Delete task"
-                        >
-                          <img src={trashIcon} alt="" />
-                        </button>
-                      ) : null}
-                      {editingCell?.id === item.id && editingCell?.field === 'subject' ? (
-                        <select
-                          className="deadlines__row-input"
-                          value={item.subject_id}
-                          onChange={async (event) => {
-                            const ok = await patchDeadline(item.id, { subject_id: event.target.value })
-                            if (ok) setEditingCell(null)
-                          }}
+                      <button
+                        type="button"
+                        className="deadlines__trash-btn"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          deleteDeadline(item.id)
+                        }}
+                        aria-label="Delete task"
+                      >
+                        <img src={trashIcon} alt="" />
+                      </button>
+
+                      <span
+                        className="deadlines__subject-pill"
+                        style={{
+                          background: item.color_bg || '#DDDeda',
+                          color: item.color_text || '#3D3A32',
+                        }}
+                      >
+                        {item.subject}
+                        <span className="deadlines__subject-pill-caret">▾</span>
+                      </span>
+
+                      {subjectMenuRowId === item.id ? (
+                        <div
+                          className="deadlines__subject-menu deadlines__subject-menu--row"
+                          role="menu"
+                          aria-label="Edit subject"
                           onClick={(event) => event.stopPropagation()}
-                          onBlur={() => setEditingCell(null)}
                         >
-                          {subjects.map((subject) => (
-                            <option key={subject.id} value={subject.id}>
-                              {subject.name}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span
-                          className="deadlines__subject-pill"
-                          style={{
-                            background: item.color_bg || '#DDDeda',
-                            color: item.color_text || '#3D3A32',
-                          }}
-                        >
-                          {item.subject}
-                          <span className="deadlines__subject-pill-caret">▾</span>
-                        </span>
-                      )}
+                          <div className="deadlines__subject-list">
+                            {subjects.map((subject) => (
+                              <button
+                                key={subject.id}
+                                type="button"
+                                className="deadlines__subject-option"
+                                onClick={async () => {
+                                  const ok = await patchDeadline(item.id, { subject_id: subject.id })
+                                  if (ok) setSubjectMenuRowId(null)
+                                }}
+                              >
+                                <span
+                                  className="deadlines__subject-chip"
+                                  style={{
+                                    background: subject.color_bg,
+                                    color: subject.color_text,
+                                  }}
+                                >
+                                  {subject.name}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+
+                          <button
+                            type="button"
+                            className="deadlines__subject-edit"
+                            onClick={() => {
+                              openSubjectModal()
+                              setSubjectMenuRowId(null)
+                            }}
+                          >
+                            Edit subjects
+                          </button>
+                        </div>
+                      ) : null}
                     </td>
                     <td
                       className="deadlines__editable-cell"
                       onClick={(event) => {
                         event.stopPropagation()
-                        setSelectedDeadlineId(item.id)
+                        setSubjectMenuRowId(null)
                         setAssignmentDraft(item.assignment_name)
                         setEditingCell({ id: item.id, field: 'assignment_name' })
                       }}
@@ -527,8 +545,14 @@ function DeadlinesPage() {
                       className="deadlines__editable-cell"
                       onClick={(event) => {
                         event.stopPropagation()
-                        setSelectedDeadlineId(item.id)
+                        setSubjectMenuRowId(null)
                         setEditingCell({ id: item.id, field: 'due_on' })
+                        setTimeout(() => {
+                          const input = dueInputRefs.current[item.id]
+                          if (!input) return
+                          if (typeof input.showPicker === 'function') input.showPicker()
+                          input.focus()
+                        }, 0)
                       }}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'due_on' ? (
@@ -536,6 +560,9 @@ function DeadlinesPage() {
                           type="date"
                           className="deadlines__row-input"
                           value={item.due_on}
+                          ref={(node) => {
+                            dueInputRefs.current[item.id] = node
+                          }}
                           onChange={async (event) => {
                             const nextDate = event.target.value
                             if (!nextDate) return
