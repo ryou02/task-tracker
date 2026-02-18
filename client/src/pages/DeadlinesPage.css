@@ -223,24 +223,37 @@
 }
 
 .deadlines__row--selected {
+  position: relative;
   outline: 2px solid rgba(200, 111, 69, 0.45);
   outline-offset: -2px;
 }
 
 .deadlines__editable-cell {
   cursor: pointer;
-  position: relative;
 }
 
 .deadlines__subject-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 8px;
   min-width: 118px;
   border-radius: 999px;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 4px 6px 4px 12px;
   text-transform: lowercase;
+}
+
+.deadlines__subject-pill-caret {
+  min-width: 20px;
+  height: 18px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.16);
+  color: inherit;
+  font-size: 0.72rem;
+  line-height: 1;
 }
 
 .deadlines__subject-pill--mat136 {
@@ -302,8 +315,8 @@
 
 .deadlines__trash-btn {
   position: absolute;
-  top: -10px;
-  right: -8px;
+  top: 4px;
+  right: 6px;
   width: 26px;
   height: 26px;
   border-radius: 8px;

@@ -472,6 +472,7 @@ function DeadlinesPage() {
                           }}
                         >
                           {item.subject}
+                          <span className="deadlines__subject-pill-caret">▾</span>
                         </span>
                       )}
                     </td>
