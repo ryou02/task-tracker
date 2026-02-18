@@ -60,6 +60,7 @@ function DeadlinesPage() {
   const [removedSubjectIds, setRemovedSubjectIds] = useState([])
   const [savingSubjects, setSavingSubjects] = useState(false)
   const [subjectError, setSubjectError] = useState('')
+  const [confirmSubjectDelete, setConfirmSubjectDelete] = useState(null)
 
   const selectedSubject = subjects.find((subject) => subject.id === selectedSubjectId) || null
 
@@ -219,12 +220,70 @@ function DeadlinesPage() {
     )
   }
 
-  function removeSubjectDraft(draft) {
+  function finalizeSubjectDraftRemoval(draft) {
     if (!String(draft.id).startsWith('new-')) {
-      setRemovedSubjectIds((previous) => [...previous, draft.id])
+      setRemovedSubjectIds((previous) =>
+        previous.includes(draft.id) ? previous : [...previous, draft.id],
+      )
+    }
+    setSubjectDrafts((previous) => previous.filter((row) => row.id !== draft.id))
+  }
+
+  async function removeSubjectDraft(draft) {
+    if (!String(draft.id).startsWith('new-')) {
+      const { count, error } = await supabase
+        .from('deadlines')
+        .select('id', { count: 'exact', head: true })
+        .eq('subject_id', draft.id)
+
+      if (error) {
+        setSubjectError(error.message)
+        return
+      }
+
+      if ((count || 0) > 0) {
+        setConfirmSubjectDelete({
+          id: draft.id,
+          name: draft.name || 'this subject',
+          count: count || 0,
+        })
+        return
+      }
     }
 
-    setSubjectDrafts((previous) => previous.filter((row) => row.id !== draft.id))
+    finalizeSubjectDraftRemoval(draft)
+  }
+
+  async function confirmDeleteSubjectDraft() {
+    if (!confirmSubjectDelete) return
+
+    const subjectId = confirmSubjectDelete.id
+
+    const { error: deadlinesDeleteError } = await supabase
+      .from('deadlines')
+      .delete()
+      .eq('subject_id', subjectId)
+
+    if (deadlinesDeleteError) {
+      setSubjectError(deadlinesDeleteError.message)
+      return
+    }
+
+    const { error: subjectDeleteError } = await supabase
+      .from('subjects')
+      .delete()
+      .eq('id', subjectId)
+
+    if (subjectDeleteError) {
+      setSubjectError(subjectDeleteError.message)
+      return
+    }
+
+    setRemovedSubjectIds((previous) => previous.filter((id) => id !== subjectId))
+    setSubjectDrafts((previous) => previous.filter((row) => row.id !== subjectId))
+    setConfirmSubjectDelete(null)
+    await loadSubjects()
+    await loadDeadlines()
   }
 
   async function saveSubjectChanges() {
@@ -247,6 +306,17 @@ function DeadlinesPage() {
     }
 
     if (removedSubjectIds.length > 0) {
+      const { error: deadlinesDeleteError } = await supabase
+        .from('deadlines')
+        .delete()
+        .in('subject_id', removedSubjectIds)
+
+      if (deadlinesDeleteError) {
+        setSubjectError(deadlinesDeleteError.message)
+        setSavingSubjects(false)
+        return
+      }
+
       const { error } = await supabase.from('subjects').delete().in('id', removedSubjectIds)
       if (error) {
         setSubjectError(error.message)
@@ -293,6 +363,7 @@ function DeadlinesPage() {
     }
 
     await loadSubjects()
+    await loadDeadlines()
     setSavingSubjects(false)
     setSubjectModalOpen(false)
   }
@@ -592,7 +663,10 @@ function DeadlinesPage() {
               <button
                 type="button"
                 className="deadlines__modal-close"
-                onClick={() => setSubjectModalOpen(false)}
+                onClick={() => {
+                  setSubjectModalOpen(false)
+                  setConfirmSubjectDelete(null)
+                }}
               >
                 x
               </button>
@@ -645,6 +719,34 @@ function DeadlinesPage() {
                 disabled={savingSubjects}
               >
                 {savingSubjects ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {confirmSubjectDelete ? (
+        <div className="deadlines__confirm-backdrop" role="presentation">
+          <section className="deadlines__confirm-modal" aria-label="Confirm subject deletion">
+            <h3>Delete subject?</h3>
+            <p>
+              Deleting <strong>{confirmSubjectDelete.name}</strong> will also delete{' '}
+              <strong>{confirmSubjectDelete.count}</strong> linked task(s).
+            </p>
+            <div className="deadlines__confirm-actions">
+              <button
+                type="button"
+                className="deadlines__confirm-btn"
+                onClick={() => setConfirmSubjectDelete(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="deadlines__confirm-btn deadlines__confirm-btn--danger"
+                onClick={confirmDeleteSubjectDraft}
+              >
+                Confirm delete
               </button>
             </div>
           </section>

@@ -179,7 +179,7 @@
 .deadlines__table-wrap {
   border: 1px solid rgba(61, 58, 50, 0.16);
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible;
   background: #faf7f2;
   box-shadow: 0 20px 35px rgba(61, 58, 50, 0.08);
 }
@@ -222,9 +222,12 @@
   background: #f1e9dc;
 }
 
+.deadlines__table tbody tr {
+  position: relative;
+}
+
 .deadlines__editable-cell {
   cursor: pointer;
-  position: relative;
 }
 
 .deadlines__subject-pill {
@@ -311,7 +314,7 @@
 .deadlines__trash-btn {
   position: absolute;
   top: 4px;
-  right: 6px;
+  right: 8px;
   width: 26px;
   height: 26px;
   border-radius: 8px;
@@ -342,6 +345,7 @@
   top: calc(100% + 6px);
   left: 8px;
   width: 220px;
+  z-index: 80;
 }
 
 .deadlines__modal-backdrop {
@@ -469,6 +473,59 @@
   cursor: not-allowed;
 }
 
+.deadlines__confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 17, 13, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  z-index: 240;
+}
+
+.deadlines__confirm-modal {
+  width: min(100%, 440px);
+  border-radius: 14px;
+  border: 1px solid rgba(93, 80, 66, 0.24);
+  background: #faf7f2;
+  box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
+  padding: 16px;
+}
+
+.deadlines__confirm-modal h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.deadlines__confirm-modal p {
+  margin: 10px 0 0;
+  color: #5f584d;
+  line-height: 1.45;
+}
+
+.deadlines__confirm-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.deadlines__confirm-btn {
+  border: 1px solid rgba(93, 80, 66, 0.2);
+  border-radius: 10px;
+  background: #f2e8d9;
+  color: #5f584d;
+  padding: 9px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deadlines__confirm-btn--danger {
+  border-color: rgba(159, 45, 32, 0.26);
+  background: #b53322;
+  color: #fff;
+}
+
 @media (max-width: 900px) {
   .deadlines-page {
     padding-top: 80px;
@@ -480,6 +537,7 @@
 
   .deadlines__table-wrap {
     overflow-x: auto;
+    overflow-y: visible;
   }
 
   .deadlines__table {
