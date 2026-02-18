@@ -57,8 +57,6 @@ function DeadlinesPage() {
 
   const [subjectModalOpen, setSubjectModalOpen] = useState(false)
   const [subjectDrafts, setSubjectDrafts] = useState([])
-  const [removedSubjectIds, setRemovedSubjectIds] = useState([])
-  const [savingSubjects, setSavingSubjects] = useState(false)
   const [subjectError, setSubjectError] = useState('')
   const [confirmSubjectDelete, setConfirmSubjectDelete] = useState(null)
 
@@ -179,7 +177,6 @@ function DeadlinesPage() {
 
   function openSubjectModal() {
     setSubjectError('')
-    setRemovedSubjectIds([])
     setSubjectDrafts(
       subjects.map((subject) => ({
         id: subject.id,
@@ -192,21 +189,19 @@ function DeadlinesPage() {
     setSubjectMenuOpen(false)
   }
 
-  function addSubjectDraft() {
-    const nextColor = defaultPalette[subjectDrafts.length % defaultPalette.length]
+  function nextSubjectName() {
+    const base = 'new subject'
+    const taken = new Set(subjects.map((subject) => subject.name.toLowerCase()))
+    if (!taken.has(base)) return base
 
-    setSubjectDrafts((previous) => [
-      ...previous,
-      {
-        id: `new-${Date.now()}-${previous.length}`,
-        name: '',
-        color_bg: nextColor,
-        color_text: getContrast(nextColor),
-      },
-    ])
+    let count = 2
+    while (taken.has(`${base} ${count}`)) {
+      count += 1
+    }
+    return `${base} ${count}`
   }
 
-  function updateSubjectDraft(draftId, patch) {
+  function updateSubjectDraftLocal(draftId, patch) {
     setSubjectDrafts((previous) =>
       previous.map((draft) => {
         if (draft.id !== draftId) return draft
@@ -220,38 +215,108 @@ function DeadlinesPage() {
     )
   }
 
-  function finalizeSubjectDraftRemoval(draft) {
-    if (!String(draft.id).startsWith('new-')) {
-      setRemovedSubjectIds((previous) =>
-        previous.includes(draft.id) ? previous : [...previous, draft.id],
-      )
+  async function addSubjectDraft() {
+    const nextColor = defaultPalette[subjects.length % defaultPalette.length]
+    const name = nextSubjectName()
+
+    const { error } = await supabase.from('subjects').insert({
+      name,
+      color_bg: nextColor,
+      color_text: getContrast(nextColor),
+    })
+
+    if (error) {
+      setSubjectError(error.message)
+      return
     }
-    setSubjectDrafts((previous) => previous.filter((row) => row.id !== draft.id))
+
+    await loadSubjects()
+    setSubjectDrafts((previous) => [
+      ...previous,
+      {
+        id: `local-${Date.now()}`,
+        name,
+        color_bg: nextColor,
+        color_text: getContrast(nextColor),
+      },
+    ])
+
+    // Re-sync drafts to true DB values after insert.
+    const { data } = await supabase
+      .from('subjects')
+      .select('id, name, color_bg, color_text, created_at')
+      .order('created_at', { ascending: true })
+
+    setSubjectDrafts(
+      (data || []).map((subject) => ({
+        id: subject.id,
+        name: subject.name,
+        color_bg: subject.color_bg,
+        color_text: subject.color_text,
+      })),
+    )
+  }
+
+  async function persistSubjectDraft(draftId, patch) {
+    const current = subjectDrafts.find((row) => row.id === draftId)
+    if (!current) return
+
+    const next = { ...current, ...patch }
+    if (!next.name.trim()) {
+      setSubjectError('Subject name cannot be empty.')
+      return
+    }
+
+    const { error } = await supabase
+      .from('subjects')
+      .update({
+        name: next.name.trim(),
+        color_bg: next.color_bg,
+        color_text: next.color_text,
+      })
+      .eq('id', draftId)
+
+    if (error) {
+      setSubjectError(error.message)
+      return
+    }
+
+    await loadSubjects()
   }
 
   async function removeSubjectDraft(draft) {
-    if (!String(draft.id).startsWith('new-')) {
-      const { count, error } = await supabase
-        .from('deadlines')
-        .select('id', { count: 'exact', head: true })
-        .eq('subject_id', draft.id)
+    const { count, error } = await supabase
+      .from('deadlines')
+      .select('id', { count: 'exact', head: true })
+      .eq('subject_id', draft.id)
 
-      if (error) {
-        setSubjectError(error.message)
-        return
-      }
-
-      if ((count || 0) > 0) {
-        setConfirmSubjectDelete({
-          id: draft.id,
-          name: draft.name || 'this subject',
-          count: count || 0,
-        })
-        return
-      }
+    if (error) {
+      setSubjectError(error.message)
+      return
     }
 
-    finalizeSubjectDraftRemoval(draft)
+    if ((count || 0) > 0) {
+      setConfirmSubjectDelete({
+        id: draft.id,
+        name: draft.name || 'this subject',
+        count: count || 0,
+      })
+      return
+    }
+
+    const { error: subjectDeleteError } = await supabase
+      .from('subjects')
+      .delete()
+      .eq('id', draft.id)
+
+    if (subjectDeleteError) {
+      setSubjectError(subjectDeleteError.message)
+      return
+    }
+
+    setSubjectDrafts((previous) => previous.filter((row) => row.id !== draft.id))
+    await loadSubjects()
+    await loadDeadlines()
   }
 
   async function confirmDeleteSubjectDraft() {
@@ -279,93 +344,10 @@ function DeadlinesPage() {
       return
     }
 
-    setRemovedSubjectIds((previous) => previous.filter((id) => id !== subjectId))
     setSubjectDrafts((previous) => previous.filter((row) => row.id !== subjectId))
     setConfirmSubjectDelete(null)
     await loadSubjects()
     await loadDeadlines()
-  }
-
-  async function saveSubjectChanges() {
-    setSavingSubjects(true)
-    setSubjectError('')
-
-    const cleanDrafts = subjectDrafts
-      .map((row) => ({ ...row, name: row.name.trim() }))
-      .filter((row) => row.name.length > 0)
-
-    const duplicateName = cleanDrafts.find(
-      (row, idx) =>
-        cleanDrafts.findIndex((candidate) => candidate.name.toLowerCase() === row.name.toLowerCase()) !== idx,
-    )
-
-    if (duplicateName) {
-      setSubjectError('Subject names must be unique.')
-      setSavingSubjects(false)
-      return
-    }
-
-    if (removedSubjectIds.length > 0) {
-      const { error: deadlinesDeleteError } = await supabase
-        .from('deadlines')
-        .delete()
-        .in('subject_id', removedSubjectIds)
-
-      if (deadlinesDeleteError) {
-        setSubjectError(deadlinesDeleteError.message)
-        setSavingSubjects(false)
-        return
-      }
-
-      const { error } = await supabase.from('subjects').delete().in('id', removedSubjectIds)
-      if (error) {
-        setSubjectError(error.message)
-        setSavingSubjects(false)
-        return
-      }
-    }
-
-    const existingRows = cleanDrafts.filter((row) => !String(row.id).startsWith('new-'))
-    const newRows = cleanDrafts.filter((row) => String(row.id).startsWith('new-'))
-
-    if (existingRows.length > 0) {
-      for (const row of existingRows) {
-        const { error } = await supabase
-          .from('subjects')
-          .update({
-            name: row.name,
-            color_bg: row.color_bg,
-            color_text: row.color_text,
-          })
-          .eq('id', row.id)
-
-        if (error) {
-          setSubjectError(error.message)
-          setSavingSubjects(false)
-          return
-        }
-      }
-    }
-
-    if (newRows.length > 0) {
-      const payload = newRows.map((row) => ({
-        name: row.name,
-        color_bg: row.color_bg,
-        color_text: row.color_text,
-      }))
-
-      const { error } = await supabase.from('subjects').insert(payload)
-      if (error) {
-        setSubjectError(error.message)
-        setSavingSubjects(false)
-        return
-      }
-    }
-
-    await loadSubjects()
-    await loadDeadlines()
-    setSavingSubjects(false)
-    setSubjectModalOpen(false)
   }
 
   function handlePageClick(event) {
@@ -680,9 +662,12 @@ function DeadlinesPage() {
                     type="color"
                     value={draft.color_bg}
                     aria-label={`Color for ${draft.name || 'subject'}`}
-                    onChange={(event) =>
-                      updateSubjectDraft(draft.id, { color_bg: event.target.value })
-                    }
+                    onChange={async (event) => {
+                      const color_bg = event.target.value
+                      const color_text = getContrast(color_bg)
+                      updateSubjectDraftLocal(draft.id, { color_bg, color_text })
+                      await persistSubjectDraft(draft.id, { color_bg, color_text })
+                    }}
                   />
 
                   <input
@@ -691,8 +676,11 @@ function DeadlinesPage() {
                     value={draft.name}
                     placeholder="Subject name"
                     onChange={(event) =>
-                      updateSubjectDraft(draft.id, { name: event.target.value })
+                      updateSubjectDraftLocal(draft.id, { name: event.target.value })
                     }
+                    onBlur={async () => {
+                      await persistSubjectDraft(draft.id, { name: draft.name })
+                    }}
                   />
 
                   <button
@@ -712,14 +700,6 @@ function DeadlinesPage() {
             <div className="deadlines__modal-actions">
               <button type="button" className="deadlines__add-row" onClick={addSubjectDraft}>
                 Add another subject
-              </button>
-              <button
-                type="button"
-                className="deadlines__save-row"
-                onClick={saveSubjectChanges}
-                disabled={savingSubjects}
-              >
-                {savingSubjects ? 'Saving...' : 'Save'}
               </button>
             </div>
           </section>

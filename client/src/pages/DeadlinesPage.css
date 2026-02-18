@@ -455,8 +455,7 @@
   gap: 10px;
 }
 
-.deadlines__add-row,
-.deadlines__save-row {
+.deadlines__add-row {
   border-radius: 10px;
   padding: 10px 12px;
   font-family: inherit;
@@ -468,17 +467,6 @@
   border: 1px solid rgba(93, 80, 66, 0.2);
   background: #efe8db;
   color: #5f584d;
-}
-
-.deadlines__save-row {
-  border: none;
-  background: #c86f45;
-  color: #fff;
-}
-
-.deadlines__save-row:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
 }
 
 .deadlines__confirm-backdrop {
