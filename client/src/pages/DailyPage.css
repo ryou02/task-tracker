@@ -164,6 +164,12 @@
   font-size: 0.96rem;
 }
 
+.daily-error {
+  margin: 8px 18px 0;
+  color: #9f2d20;
+  font-size: 0.9rem;
+}
+
 .daily-grid-wrap {
   overflow-x: auto;
 }
@@ -257,6 +263,13 @@
   background: #fff;
 }
 
+.daily-empty {
+  background: #fff8ef;
+  color: #6f6b61;
+  font-style: italic;
+  padding: 16px;
+}
+
 .daily-progress {
   padding: 18px;
   background: #f7f0e5;
@@ -328,6 +341,122 @@
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.daily-habit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(21, 16, 12, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 250;
+  padding: 14px;
+}
+
+.daily-habit-modal {
+  width: min(100%, 540px);
+  border-radius: 14px;
+  border: 1px solid rgba(93, 80, 66, 0.24);
+  background: #faf7f2;
+  box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
+  padding: 14px;
+}
+
+.daily-habit-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.daily-habit-modal__head h3 {
+  margin: 0;
+}
+
+.daily-habit-modal__head button {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid rgba(93, 80, 66, 0.2);
+  background: #f2e8d9;
+  cursor: pointer;
+}
+
+.daily-habit-modal__list {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.daily-habit-modal__row {
+  border: 1px solid rgba(93, 80, 66, 0.18);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: #f8f2e8;
+}
+
+.daily-habit-modal__name {
+  width: 100%;
+  border: 1px solid rgba(93, 80, 66, 0.2);
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #fffdf9;
+}
+
+.daily-habit-modal__delete {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(159, 45, 32, 0.26);
+  background: #f7d8d3;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.daily-habit-modal__delete img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.daily-habit-modal__add {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 8px;
+}
+
+.daily-habit-modal__add input {
+  border-radius: 10px;
+  border: 1px solid rgba(93, 80, 66, 0.24);
+  padding: 10px 12px;
+  font-family: inherit;
+  background: #fffdf9;
+}
+
+.daily-habit-modal__add button {
+  border-radius: 10px;
+  border: none;
+  background: #c86f45;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.daily-habit-modal__error {
+  margin: 8px 0 0;
+  color: #9f2d20;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 900px) {

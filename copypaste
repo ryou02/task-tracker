@@ -1,0 +1,82 @@
+-- =========================
+-- DAILY TRACKER TABLES + RLS (SQL ONLY)
+-- Paste this into Supabase SQL Editor
+-- =========================
+
+-- 1) HABITS TABLE
+create table if not exists public.daily_habits (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  name text not null,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  unique (user_id, name)
+);
+
+create index if not exists daily_habits_user_idx
+  on public.daily_habits (user_id, sort_order, created_at);
+
+alter table public.daily_habits enable row level security;
+
+create policy "daily_habits_select_own"
+on public.daily_habits
+for select
+using (auth.uid() = user_id);
+
+create policy "daily_habits_insert_own"
+on public.daily_habits
+for insert
+with check (auth.uid() = user_id);
+
+create policy "daily_habits_update_own"
+on public.daily_habits
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "daily_habits_delete_own"
+on public.daily_habits
+for delete
+using (auth.uid() = user_id);
+
+
+-- 2) HABIT DAY LOGS TABLE
+-- One row per habit per day. `done = true/false`.
+create table if not exists public.daily_habit_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  habit_id uuid not null references public.daily_habits(id) on delete cascade,
+  entry_date date not null,
+  done boolean not null default false,
+  created_at timestamptz not null default now(),
+  unique (habit_id, entry_date)
+);
+
+create index if not exists daily_habit_logs_user_date_idx
+  on public.daily_habit_logs (user_id, entry_date);
+
+create index if not exists daily_habit_logs_habit_date_idx
+  on public.daily_habit_logs (habit_id, entry_date);
+
+alter table public.daily_habit_logs enable row level security;
+
+create policy "daily_habit_logs_select_own"
+on public.daily_habit_logs
+for select
+using (auth.uid() = user_id);
+
+create policy "daily_habit_logs_insert_own"
+on public.daily_habit_logs
+for insert
+with check (auth.uid() = user_id);
+
+create policy "daily_habit_logs_update_own"
+on public.daily_habit_logs
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "daily_habit_logs_delete_own"
+on public.daily_habit_logs
+for delete
+using (auth.uid() = user_id);
