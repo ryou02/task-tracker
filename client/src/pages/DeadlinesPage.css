@@ -222,6 +222,11 @@
   background: #f1e9dc;
 }
 
+.deadlines__row--selected {
+  outline: 2px solid rgba(200, 111, 69, 0.45);
+  outline-offset: -2px;
+}
+
 .deadlines__subject-pill {
   display: inline-flex;
   align-items: center;
@@ -277,6 +282,48 @@
   text-align: center;
   color: #6f6b61;
   font-style: italic;
+}
+
+.deadlines__row-input {
+  width: 100%;
+  border: 1px solid rgba(93, 80, 66, 0.22);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #fffdf9;
+  color: #3d3a32;
+}
+
+.deadlines__row-actions {
+  min-height: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.deadlines__action-btn {
+  border: 1px solid rgba(93, 80, 66, 0.18);
+  border-radius: 8px;
+  background: #f5ede1;
+  color: #5f584d;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.deadlines__action-btn--save {
+  background: #c86f45;
+  border-color: #b15f39;
+  color: #fff;
+}
+
+.deadlines__action-btn--danger {
+  background: #f7d8d3;
+  border-color: rgba(159, 45, 32, 0.25);
+  color: #8f2419;
 }
 
 .deadlines__modal-backdrop {
