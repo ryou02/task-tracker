@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import trashIcon from '../assets/trash.png'
 import { supabase } from '../lib/supabase'
 import './DeadlinesPage.css'
 
@@ -50,13 +51,8 @@ function DeadlinesPage() {
   const [deadlinesError, setDeadlinesError] = useState('')
   const [addingTask, setAddingTask] = useState(false)
   const [selectedDeadlineId, setSelectedDeadlineId] = useState(null)
-  const [editingDeadlineId, setEditingDeadlineId] = useState(null)
-  const [editingDraft, setEditingDraft] = useState({
-    subject_id: '',
-    assignment_name: '',
-    due_on: '',
-  })
-  const [savingDeadline, setSavingDeadline] = useState(false)
+  const [editingCell, setEditingCell] = useState(null)
+  const [assignmentDraft, setAssignmentDraft] = useState('')
 
   const [subjectModalOpen, setSubjectModalOpen] = useState(false)
   const [subjectDrafts, setSubjectDrafts] = useState([])
@@ -158,56 +154,14 @@ function DeadlinesPage() {
     await loadDeadlines()
   }
 
-  function startEditing(row) {
-    setEditingDeadlineId(row.id)
-    setEditingDraft({
-      subject_id: row.subject_id,
-      assignment_name: row.assignment_name,
-      due_on: row.due_on,
-    })
-    setDeadlinesError('')
-  }
-
-  function cancelEditing() {
-    setEditingDeadlineId(null)
-  }
-
-  async function saveDeadlineChanges() {
-    if (!editingDeadlineId) return
-    if (!editingDraft.subject_id) {
-      setDeadlinesError('Select a subject.')
-      return
-    }
-    if (!editingDraft.assignment_name.trim()) {
-      setDeadlinesError('Assignment name cannot be empty.')
-      return
-    }
-    if (!editingDraft.due_on) {
-      setDeadlinesError('Select a due date.')
-      return
-    }
-
-    setSavingDeadline(true)
-    setDeadlinesError('')
-
-    const { error } = await supabase
-      .from('deadlines')
-      .update({
-        subject_id: editingDraft.subject_id,
-        assignment_name: editingDraft.assignment_name.trim(),
-        due_on: editingDraft.due_on,
-      })
-      .eq('id', editingDeadlineId)
-
+  async function patchDeadline(deadlineId, patch) {
+    const { error } = await supabase.from('deadlines').update(patch).eq('id', deadlineId)
     if (error) {
       setDeadlinesError(error.message)
-      setSavingDeadline(false)
-      return
+      return false
     }
-
-    setSavingDeadline(false)
-    setEditingDeadlineId(null)
     await loadDeadlines()
+    return true
   }
 
   async function deleteDeadline(deadlineId) {
@@ -219,9 +173,7 @@ function DeadlinesPage() {
     if (selectedDeadlineId === deadlineId) {
       setSelectedDeadlineId(null)
     }
-    if (editingDeadlineId === deadlineId) {
-      setEditingDeadlineId(null)
-    }
+    if (editingCell?.id === deadlineId) setEditingCell(null)
     await loadDeadlines()
   }
 
@@ -346,8 +298,16 @@ function DeadlinesPage() {
     setSubjectModalOpen(false)
   }
 
+  function handlePageClick(event) {
+    const clickedTaskRow = event.target.closest('.deadlines__table tbody tr')
+    if (!clickedTaskRow) {
+      setSelectedDeadlineId(null)
+      setEditingCell(null)
+    }
+  }
+
   return (
-    <main className="deadlines-page">
+    <main className="deadlines-page" onClick={handlePageClick}>
       <section className="deadlines">
         <header className="deadlines__header">
           <p className="deadlines__eyebrow">Planner</p>
@@ -449,13 +409,12 @@ function DeadlinesPage() {
                 <th>assignment name</th>
                 <th>days left</th>
                 <th>due on</th>
-                <th>actions</th>
               </tr>
             </thead>
             <tbody>
               {deadlinesRows.length === 0 ? (
                 <tr>
-                  <td className="deadlines__table-empty" colSpan={5}>
+                  <td className="deadlines__table-empty" colSpan={4}>
                     No tasks yet. Add your first deadline above.
                   </td>
                 </tr>
@@ -466,18 +425,37 @@ function DeadlinesPage() {
                     className={selectedDeadlineId === item.id ? 'deadlines__row--selected' : ''}
                     onClick={() => setSelectedDeadlineId(item.id)}
                   >
-                    <td>
-                      {editingDeadlineId === item.id ? (
+                    <td
+                      className="deadlines__editable-cell"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedDeadlineId(item.id)
+                        setEditingCell({ id: item.id, field: 'subject' })
+                      }}
+                    >
+                      {selectedDeadlineId === item.id ? (
+                        <button
+                          type="button"
+                          className="deadlines__trash-btn"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            deleteDeadline(item.id)
+                          }}
+                          aria-label="Delete task"
+                        >
+                          <img src={trashIcon} alt="" />
+                        </button>
+                      ) : null}
+                      {editingCell?.id === item.id && editingCell?.field === 'subject' ? (
                         <select
                           className="deadlines__row-input"
-                          value={editingDraft.subject_id}
-                          onChange={(event) =>
-                            setEditingDraft((previous) => ({
-                              ...previous,
-                              subject_id: event.target.value,
-                            }))
-                          }
+                          value={item.subject_id}
+                          onChange={async (event) => {
+                            const ok = await patchDeadline(item.id, { subject_id: event.target.value })
+                            if (ok) setEditingCell(null)
+                          }}
                           onClick={(event) => event.stopPropagation()}
+                          onBlur={() => setEditingCell(null)}
                         >
                           {subjects.map((subject) => (
                             <option key={subject.id} value={subject.id}>
@@ -497,114 +475,78 @@ function DeadlinesPage() {
                         </span>
                       )}
                     </td>
-                    <td>
-                      {editingDeadlineId === item.id ? (
+                    <td
+                      className="deadlines__editable-cell"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedDeadlineId(item.id)
+                        setAssignmentDraft(item.assignment_name)
+                        setEditingCell({ id: item.id, field: 'assignment_name' })
+                      }}
+                    >
+                      {editingCell?.id === item.id && editingCell?.field === 'assignment_name' ? (
                         <input
                           type="text"
                           className="deadlines__row-input"
-                          value={editingDraft.assignment_name}
-                          onChange={(event) =>
-                            setEditingDraft((previous) => ({
-                              ...previous,
-                              assignment_name: event.target.value,
-                            }))
-                          }
+                          value={assignmentDraft}
+                          onChange={(event) => setAssignmentDraft(event.target.value)}
                           onClick={(event) => event.stopPropagation()}
+                          onBlur={async () => {
+                            const trimmed = assignmentDraft.trim()
+                            if (!trimmed) {
+                              setEditingCell(null)
+                              return
+                            }
+                            const ok = await patchDeadline(item.id, { assignment_name: trimmed })
+                            if (ok) setEditingCell(null)
+                          }}
+                          onKeyDown={async (event) => {
+                            if (event.key === 'Enter') {
+                              const trimmed = assignmentDraft.trim()
+                              if (!trimmed) return
+                              const ok = await patchDeadline(item.id, { assignment_name: trimmed })
+                              if (ok) setEditingCell(null)
+                            }
+                            if (event.key === 'Escape') {
+                              setEditingCell(null)
+                            }
+                          }}
+                          autoFocus
                         />
                       ) : (
                         item.assignment_name
                       )}
                     </td>
                     <td
-                      className={`deadlines__days-cell ${dayClass(
-                        editingDeadlineId === item.id
-                          ? computeDaysLeft(editingDraft.due_on)
-                          : item.days_left,
-                      )}`}
+                      className={`deadlines__days-cell ${dayClass(item.days_left)}`}
                     >
-                      {editingDeadlineId === item.id
-                        ? computeDaysLeft(editingDraft.due_on)
-                        : item.days_left}
+                      {item.days_left}
                     </td>
-                    <td>
-                      {editingDeadlineId === item.id ? (
+                    <td
+                      className="deadlines__editable-cell"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedDeadlineId(item.id)
+                        setEditingCell({ id: item.id, field: 'due_on' })
+                      }}
+                    >
+                      {editingCell?.id === item.id && editingCell?.field === 'due_on' ? (
                         <input
                           type="date"
                           className="deadlines__row-input"
-                          value={editingDraft.due_on}
-                          onChange={(event) =>
-                            setEditingDraft((previous) => ({
-                              ...previous,
-                              due_on: event.target.value,
-                            }))
-                          }
+                          value={item.due_on}
+                          onChange={async (event) => {
+                            const nextDate = event.target.value
+                            if (!nextDate) return
+                            const ok = await patchDeadline(item.id, { due_on: nextDate })
+                            if (ok) setEditingCell(null)
+                          }}
                           onClick={(event) => event.stopPropagation()}
+                          onBlur={() => setEditingCell(null)}
                         />
                       ) : (
                         item.due_on_label
                       )}
-                    </td>
-                    <td>
-                      <div className="deadlines__row-actions">
-                        {editingDeadlineId === item.id ? (
-                          <>
-                            <button
-                              type="button"
-                              className="deadlines__action-btn deadlines__action-btn--save"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                saveDeadlineChanges()
-                              }}
-                              disabled={savingDeadline}
-                            >
-                              {savingDeadline ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              type="button"
-                              className="deadlines__action-btn"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                cancelEditing()
-                              }}
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="button"
-                              className="deadlines__action-btn deadlines__action-btn--danger"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                deleteDeadline(item.id)
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </>
-                        ) : selectedDeadlineId === item.id ? (
-                          <>
-                            <button
-                              type="button"
-                              className="deadlines__action-btn"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                startEditing(item)
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="deadlines__action-btn deadlines__action-btn--danger"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                deleteDeadline(item.id)
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </>
-                        ) : null}
-                      </div>
                     </td>
                   </tr>
                 ))
