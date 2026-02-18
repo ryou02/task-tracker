@@ -11,11 +11,26 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true
 
-    supabase.auth.getSession().then(({ data }) => {
+    const initAuth = async () => {
+      const url = new URL(window.location.href)
+      const authCode = url.searchParams.get('code')
+
+      // OAuth providers (GitHub/Google) can redirect back with a code.
+      // Exchange it before checking session so protected routes don't bounce.
+      if (authCode) {
+        await supabase.auth.exchangeCodeForSession(authCode)
+        url.searchParams.delete('code')
+        window.history.replaceState({}, '', url.toString())
+      }
+
+      const { data } = await supabase.auth.getSession()
+
       if (!mounted) return
       setSession(data.session)
       setLoading(false)
-    })
+    }
+
+    initAuth()
 
     const {
       data: { subscription },

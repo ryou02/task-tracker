@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import { useAuth } from '../context/AuthProvider'
@@ -8,7 +8,6 @@ import './LoginPage.css'
 
 function LoginPage() {
   const navigate = useNavigate()
-  const location = useLocation()
   const { user } = useAuth()
 
   const [email, setEmail] = useState('')
@@ -16,11 +15,10 @@ function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
-
-  const fromPath = location.state?.from?.pathname || '/dashboard'
+  const redirectPath = '/dashboard'
 
   if (user) {
-    return <Navigate to={fromPath} replace />
+    return <Navigate to={redirectPath} replace />
   }
 
   async function handleEmailLogin(event) {
@@ -40,25 +38,7 @@ function LoginPage() {
       return
     }
 
-    navigate(fromPath, { replace: true })
-  }
-
-  async function handleGoogleLogin() {
-    setLoading(true)
-    setError('')
-    setMessage('')
-
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    })
-
-    if (oauthError) {
-      setError(oauthError.message)
-      setLoading(false)
-    }
+    navigate(redirectPath, { replace: true })
   }
 
   async function handleSignUp() {
@@ -99,14 +79,6 @@ function LoginPage() {
         <p className="login-subtitle">
           Continue to your dashboard, deadlines, and daily task tracker.
         </p>
-
-        <button type="button" className="login-google" onClick={handleGoogleLogin} disabled={loading}>
-          Continue with Google
-        </button>
-
-        <div className="login-divider" role="separator" aria-label="or">
-          <span>or</span>
-        </div>
 
         <form className="login-form" onSubmit={handleEmailLogin}>
           <label htmlFor="email">Email</label>

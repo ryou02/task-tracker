@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 export function FloatingNav({ navItems, className }) {
   const [visible, setVisible] = useState(true)
+  const location = useLocation()
 
   useEffect(() => {
     let previousY = window.scrollY
@@ -28,6 +29,11 @@ export function FloatingNav({ navItems, className }) {
     }
   }, [])
 
+  function isActivePath(path) {
+    if (path === '/') return location.pathname === '/'
+    return location.pathname.startsWith(path)
+  }
+
   return (
     <div
       className={`fixed inset-x-0 top-10 z-[5000] mx-auto flex max-w-fit items-center justify-center transition-all duration-200 ${
@@ -39,7 +45,11 @@ export function FloatingNav({ navItems, className }) {
           <Link
             key={`link-${idx}`}
             to={navItem.link}
-            className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-[#6f6b61] transition-colors hover:bg-[#ede7dc] hover:text-[#3d3a32]"
+            className={`relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              isActivePath(navItem.link)
+                ? 'bg-[#c86f45] text-white'
+                : 'text-[#6f6b61] hover:bg-[#ede7dc] hover:text-[#3d3a32]'
+            }`}
           >
             <span className="block sm:hidden">{navItem.icon}</span>
             <span className="hidden sm:block">{navItem.name}</span>
@@ -50,7 +60,11 @@ export function FloatingNav({ navItems, className }) {
 
         <Link
           to="/login"
-          className="relative rounded-full bg-[#c86f45] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#af5a35] hover:shadow-[0_8px_20px_rgba(200,111,69,0.35)]"
+          className={`relative rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
+            isActivePath('/login')
+              ? 'bg-[#c86f45] text-white hover:bg-[#af5a35] hover:shadow-[0_8px_20px_rgba(200,111,69,0.35)]'
+              : 'bg-[#ede7dc] text-[#5f584d] hover:bg-[#e4dbcb]'
+          }`}
         >
           <span>Login</span>
         </Link>
