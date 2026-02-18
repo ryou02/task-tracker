@@ -1,15 +1,20 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './DailyPage.css'
 
-const weekGroups = [
-  { label: 'Week 1', days: [1, 2, 3, 4, 5, 6, 7] },
-  { label: 'Week 2', days: [8, 9, 10, 11, 12, 13, 14] },
-  { label: 'Week 3', days: [15, 16, 17, 18, 19, 20, 21] },
-  { label: 'Week 4', days: [22, 23, 24, 25, 26, 27, 28] },
-  { label: 'Week 5', days: [29, 30, 31] },
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
-
-const dayLabels = ['Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr']
 
 const habits = [
   'Wake up at 5:00',
@@ -22,10 +27,8 @@ const habits = [
   'Social Media Detox',
 ]
 
-const allDays = weekGroups.flatMap((week) => week.days)
-
-function seededCompletion(habitIndex, day) {
-  return (habitIndex * 3 + day) % (habitIndex % 2 === 0 ? 4 : 5) !== 0
+function seededCompletion(habitIndex, dayIndex, monthIndex) {
+  return (habitIndex * 3 + dayIndex + monthIndex * 2) % (habitIndex % 2 === 0 ? 4 : 5) !== 0
 }
 
 function buildSmoothPath(points) {
@@ -45,10 +48,48 @@ function buildSmoothPath(points) {
   return path
 }
 
-function DailyPage() {
-  const [completionGrid, setCompletionGrid] = useState(() =>
-    habits.map((_, habitIndex) => allDays.map((day) => seededCompletion(habitIndex, day))),
+function createCompletionGrid(dayCount, monthIndex) {
+  return habits.map((_, habitIndex) =>
+    Array.from({ length: dayCount }, (_, dayIndex) =>
+      seededCompletion(habitIndex, dayIndex + 1, monthIndex),
+    ),
   )
+}
+
+function DailyPage() {
+  const currentYear = new Date().getFullYear()
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
+
+  const allDates = useMemo(() => {
+    const daysInMonth = new Date(currentYear, selectedMonth + 1, 0).getDate()
+    return Array.from(
+      { length: daysInMonth },
+      (_, idx) => new Date(currentYear, selectedMonth, idx + 1),
+    )
+  }, [currentYear, selectedMonth])
+
+  const weekGroups = useMemo(() => {
+    const groups = []
+    let cursor = 0
+    let week = 1
+
+    while (cursor < allDates.length) {
+      const end = Math.min(cursor + 7, allDates.length)
+      groups.push({ label: `Week ${week}`, count: end - cursor })
+      cursor = end
+      week += 1
+    }
+
+    return groups
+  }, [allDates.length])
+
+  const [completionGrid, setCompletionGrid] = useState(() =>
+    createCompletionGrid(allDates.length, selectedMonth),
+  )
+
+  useEffect(() => {
+    setCompletionGrid(createCompletionGrid(allDates.length, selectedMonth))
+  }, [allDates.length, selectedMonth])
 
   function toggleDay(habitIndex, dayIndex) {
     setCompletionGrid((previous) =>
@@ -62,14 +103,14 @@ function DailyPage() {
 
   const dailyProgress = useMemo(
     () =>
-      allDays.map((_, dayIndex) => {
+      allDates.map((_, dayIndex) => {
         const completedCount = completionGrid.reduce(
           (count, row) => count + (row[dayIndex] ? 1 : 0),
           0,
         )
         return Math.round((completedCount / habits.length) * 100)
       }),
-    [completionGrid],
+    [allDates, completionGrid],
   )
 
   const totalCompleted = useMemo(
@@ -78,7 +119,7 @@ function DailyPage() {
   )
 
   const averageProgress = Math.round(
-    dailyProgress.reduce((sum, value) => sum + value, 0) / dailyProgress.length,
+    dailyProgress.reduce((sum, value) => sum + value, 0) / Math.max(1, dailyProgress.length),
   )
 
   const chart = useMemo(() => {
@@ -89,16 +130,24 @@ function DailyPage() {
     const graphHeight = chartHeight - padding * 2
 
     const points = dailyProgress.map((value, idx) => ({
-      x: Number((padding + (idx / (dailyProgress.length - 1)) * graphWidth).toFixed(2)),
+      x: Number(
+        (
+          padding +
+          (idx / Math.max(1, dailyProgress.length - 1)) * graphWidth
+        ).toFixed(2),
+      ),
       y: Number((chartHeight - padding - (value / 100) * graphHeight).toFixed(2)),
       value,
     }))
 
     const baseY = chartHeight - padding
     const linePath = buildSmoothPath(points)
-    const areaPath = `${linePath} L ${points[points.length - 1].x} ${baseY} L ${points[0].x} ${baseY} Z`
+    const areaPath =
+      points.length > 0
+        ? `${linePath} L ${points[points.length - 1].x} ${baseY} L ${points[0].x} ${baseY} Z`
+        : ''
 
-    return { chartWidth, chartHeight, points, linePath, areaPath }
+    return { chartWidth, chartHeight, linePath, areaPath }
   }, [dailyProgress])
 
   return (
@@ -118,11 +167,40 @@ function DailyPage() {
       <section className="daily-card">
         <header className="daily-toolbar">
           <div className="daily-month-control" aria-label="Month navigation">
-            <button type="button" className="daily-icon-btn" aria-label="Previous month">
+            <button
+              type="button"
+              className="daily-icon-btn"
+              aria-label="Previous month"
+              onClick={() =>
+                setSelectedMonth((previous) => (previous === 0 ? 11 : previous - 1))
+              }
+            >
               &#x2039;
             </button>
-            <h1 className="daily-month-title">January</h1>
-            <button type="button" className="daily-icon-btn" aria-label="Next month">
+
+            <select
+              className="daily-month-select"
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(Number(event.target.value))}
+              aria-label="Select month"
+            >
+              {monthNames.map((month, idx) => (
+                <option key={month} value={idx}>
+                  {month}
+                </option>
+              ))}
+            </select>
+
+            <h1 className="daily-month-title">{currentYear}</h1>
+
+            <button
+              type="button"
+              className="daily-icon-btn"
+              aria-label="Next month"
+              onClick={() =>
+                setSelectedMonth((previous) => (previous === 11 ? 0 : previous + 1))
+              }
+            >
               &#x203A;
             </button>
           </div>
@@ -157,22 +235,28 @@ function DailyPage() {
                   My Habits
                 </th>
                 {weekGroups.map((week) => (
-                  <th key={week.label} colSpan={week.days.length} className="daily-week-group">
+                  <th key={week.label} colSpan={week.count} className="daily-week-group">
                     {week.label}
                   </th>
                 ))}
               </tr>
               <tr>
-                {allDays.map((_, idx) => (
-                  <th key={`label-${idx}`} className="daily-day-label">
-                    {dayLabels[idx % 7]}
+                {allDates.map((date) => (
+                  <th
+                    key={`label-${date.toISOString()}`}
+                    className="daily-day-label"
+                  >
+                    {date.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 2)}
                   </th>
                 ))}
               </tr>
               <tr>
-                {allDays.map((day) => (
-                  <th key={`date-${day}`} className="daily-day-number">
-                    {day}
+                {allDates.map((date) => (
+                  <th
+                    key={`date-${date.toISOString()}`}
+                    className="daily-day-number"
+                  >
+                    {date.getDate()}
                   </th>
                 ))}
               </tr>
@@ -181,17 +265,17 @@ function DailyPage() {
               {habits.map((habit, habitIndex) => (
                 <tr key={habit}>
                   <td className="daily-habit-name">{habit}</td>
-                  {allDays.map((day, dayIndex) => {
+                  {allDates.map((date, dayIndex) => {
                     const completed = completionGrid[habitIndex][dayIndex]
                     return (
-                      <td key={`${habit}-${day}`} className="daily-checkbox-cell">
+                      <td key={`${habit}-${date.toISOString()}`} className="daily-checkbox-cell">
                         <button
                           type="button"
                           className={`daily-checkbox ${
                             completed ? 'daily-checkbox--done' : 'daily-checkbox--todo'
                           }`}
                           aria-pressed={completed}
-                          aria-label={`${habit} on day ${day}`}
+                          aria-label={`${habit} on day ${date.getDate()}`}
                           onClick={() => toggleDay(habitIndex, dayIndex)}
                         >
                           {completed ? '✓' : ''}

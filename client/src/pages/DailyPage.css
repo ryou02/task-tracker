@@ -76,6 +76,21 @@
   gap: 12px;
 }
 
+.daily-month-select {
+  border: 1px solid rgba(250, 247, 242, 0.34);
+  border-radius: 10px;
+  padding: 7px 10px;
+  background: rgba(250, 247, 242, 0.12);
+  color: #f8f6f1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.daily-month-select option {
+  color: #3d3a32;
+}
+
 .daily-icon-btn {
   width: 34px;
   height: 34px;
