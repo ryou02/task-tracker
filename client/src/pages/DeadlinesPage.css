@@ -430,8 +430,16 @@
   border: 1px solid rgba(159, 45, 32, 0.26);
   background: #f7d8d3;
   color: #8f2419;
-  font-weight: 500;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.deadlines__delete-btn img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 }
 
 .deadlines__modal-error {

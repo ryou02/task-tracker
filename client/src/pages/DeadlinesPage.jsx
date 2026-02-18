@@ -699,8 +699,9 @@ function DeadlinesPage() {
                     type="button"
                     className="deadlines__delete-btn"
                     onClick={() => removeSubjectDraft(draft)}
+                    aria-label={`Delete ${draft.name || 'subject'}`}
                   >
-                    Delete
+                    <img src={trashIcon} alt="" />
                   </button>
                 </div>
               ))}
