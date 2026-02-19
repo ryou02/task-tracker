@@ -1,102 +1,128 @@
-import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
+
+import logoIcon from '../assets/logo.png'
 import { useAuth } from '../context/AuthProvider'
 import ThemeButton from './ThemeButton.jsx'
-import settingsIcon from '../assets/settings.png'
-import logoIcon from '../assets/logo.png'
+import { Sidebar, SidebarBody, SidebarLink } from '../ui/sidebar.jsx'
 import './SideNavbar.css'
+
+function IconGrid() {
+  return <span className="acet-icon-grid" />
+}
+
+function IconCheck() {
+  return <span className="acet-icon-check" />
+}
+
+function IconDeadline() {
+  return <span className="acet-icon-deadline" />
+}
+
+function IconCalendar() {
+  return <span className="acet-icon-calendar" />
+}
+
+function IconClock() {
+  return <span className="acet-icon-clock" />
+}
 
 function SideNavbar() {
   const navigate = useNavigate()
   const { signOut, user } = useAuth()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const settingsRef = useRef(null)
 
   const userEmail = user?.email || 'No email'
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null
   const avatarFallback = userEmail?.trim()?.[0]?.toUpperCase() || '?'
+
+  const links = [
+    { label: 'Dashboard', href: '/dashboard', icon: <IconGrid /> },
+    { label: 'Daily Tasks', href: '/daily', icon: <IconCheck /> },
+    { label: 'Deadlines', href: '/deadlines', icon: <IconDeadline /> },
+    { label: 'Calender', href: '/calender', icon: <IconCalendar /> },
+    { label: 'Pomodoro', href: '/pomodoro', icon: <IconClock /> },
+  ]
 
   async function handleLogout() {
     await signOut()
     navigate('/login', { replace: true })
   }
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (!settingsRef.current?.contains(event.target)) {
+        setSettingsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   return (
-    <aside className="side-navbar" aria-label="App navigation">
-      <div className="side-navbar__inner">
-        <div className="side-navbar__brand">
-          <img src={logoIcon} alt="" />
-          <span>task tracker</span>
+    <Sidebar open setOpen={() => {}} className="side-navbar">
+      <SidebarBody className="side-navbar__inner">
+        <div className="side-navbar__top">
+          <div className="side-navbar__brand">
+            <img src={logoIcon} alt="" />
+            <span className="side-navbar__brand-label">task tracker</span>
+          </div>
+
+          <nav className="side-navbar__links">
+            {links.map((link) => (
+              <SidebarLink key={link.href} link={link} />
+            ))}
+          </nav>
         </div>
 
-        <nav className="side-navbar__links">
-          <NavLink to="/dashboard" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/daily" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
-            Daily Tasks
-          </NavLink>
-          <NavLink to="/deadlines" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
-            Deadlines
-          </NavLink>
-          <NavLink to="/calender" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
-            Calender
-          </NavLink>
-          <NavLink to="/pomodoro" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
-            Pomodoro
-          </NavLink>
-        </nav>
-
-        <div className="side-navbar__settings-wrap">
+        <div className="side-navbar__bottom">
           <button
             type="button"
-            className="side-navbar__settings-btn"
-            onClick={() => setSettingsOpen((previous) => !previous)}
-            aria-label="Open settings"
+            className="side-navbar__user-btn"
+            onClick={() => setSettingsOpen(true)}
             aria-expanded={settingsOpen}
+            aria-label="Open account actions"
           >
-            <span className="side-navbar__settings-user">
-              <span className="side-navbar__settings-avatar" aria-hidden="true">
-                {avatarUrl ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" /> : avatarFallback}
-              </span>
-              <span className="side-navbar__settings-email">{userEmail}</span>
+            <span className="side-navbar__avatar" aria-hidden="true">
+              {avatarUrl ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" /> : avatarFallback}
             </span>
-            <img src={settingsIcon} alt="" />
+            <span className="side-navbar__email">{userEmail}</span>
+            <span className="side-navbar__chevron">▼</span>
           </button>
         </div>
-      </div>
+      </SidebarBody>
 
-      {settingsOpen ? (
-        <div
-          className="side-navbar__modal-backdrop"
-          role="presentation"
-          onClick={() => setSettingsOpen(false)}
-        >
-          <section
-            className="side-navbar__settings-modal"
-            aria-label="Settings"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <header className="side-navbar__modal-head">
-              <div>
-                <p className="side-navbar__modal-label">Signed in as</p>
-                <p className="side-navbar__modal-email">{userEmail}</p>
-              </div>
-            </header>
-
-            <div className="side-navbar__modal-actions">
-              <ThemeButton className="side-navbar__hud-theme" />
-              <button
-                type="button"
-                className="side-navbar__hud-logout"
-                onClick={handleLogout}
+      {settingsOpen && typeof document !== 'undefined'
+        ? createPortal(
+            <div className="side-navbar__modal-backdrop" role="presentation" onClick={() => setSettingsOpen(false)}>
+              <section
+                className="side-navbar__settings-modal"
+                aria-label="Account actions"
+                ref={settingsRef}
+                onClick={(event) => event.stopPropagation()}
               >
-                Log out
-              </button>
-            </div>
-          </section>
-        </div>
-      ) : null}
-    </aside>
+                <header className="side-navbar__modal-head">
+                  <p className="side-navbar__modal-label">Signed in as</p>
+                  <p className="side-navbar__modal-email">{userEmail}</p>
+                </header>
+
+                <div className="side-navbar__modal-actions">
+                  <ThemeButton className="side-navbar__theme-btn" />
+
+                  <button type="button" className="side-navbar__logout-btn" onClick={handleLogout}>
+                    <span className="acet-icon-logout" aria-hidden="true" />
+                    <span className="side-navbar__logout-label">Log out</span>
+                  </button>
+                </div>
+              </section>
+            </div>,
+            document.body,
+          )
+        : null}
+    </Sidebar>
   )
 }
 
