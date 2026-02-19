@@ -15,6 +15,10 @@
 .dashboard-header {
   max-width: 1240px;
   margin: 0 auto 20px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: dashboardFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.08s;
 }
 
 .dashboard-header__eyebrow {
@@ -63,6 +67,10 @@
   gap: 12px;
   overflow-x: auto;
   padding-bottom: 6px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: dashboardFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.18s;
 }
 
 .dashboard-card {
@@ -193,6 +201,10 @@
   border-radius: 14px;
   overflow: hidden;
   background: var(--app-panel);
+  opacity: 0;
+  transform: translateY(14px);
+  animation: dashboardFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.28s;
 }
 
 .dashboard-upcoming__head {
@@ -289,6 +301,17 @@
   text-align: center;
   color: var(--app-soft);
   font-style: italic;
+}
+
+@keyframes dashboardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 900px) {

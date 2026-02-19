@@ -49,6 +49,8 @@ function DeadlinesPage() {
   const [taskName, setTaskName] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [deadlinesRows, setDeadlinesRows] = useState([])
+  const [enteringRowIds, setEnteringRowIds] = useState(new Set())
+  const [removingRowIds, setRemovingRowIds] = useState(new Set())
   const [deadlinesError, setDeadlinesError] = useState('')
   const [addingTask, setAddingTask] = useState(false)
   const [subjectMenuRowId, setSubjectMenuRowId] = useState(null)
@@ -87,7 +89,7 @@ function DeadlinesPage() {
     }
   }
 
-  async function loadDeadlines() {
+  async function loadDeadlines(highlightId = null) {
     const { data, error } = await supabase
       .from('deadlines')
       .select('id, subject_id, assignment_name, due_on, subjects(name, color_bg, color_text)')
@@ -111,6 +113,16 @@ function DeadlinesPage() {
     }))
 
     setDeadlinesRows(normalized)
+    if (highlightId) {
+      setEnteringRowIds((previous) => new Set([...previous, highlightId]))
+      window.setTimeout(() => {
+        setEnteringRowIds((previous) => {
+          const next = new Set(previous)
+          next.delete(highlightId)
+          return next
+        })
+      }, 520)
+    }
   }
 
   useEffect(() => {
@@ -137,11 +149,15 @@ function DeadlinesPage() {
     setAddingTask(true)
     setDeadlinesError('')
 
-    const { error } = await supabase.from('deadlines').insert({
-      subject_id: selectedSubjectId,
-      assignment_name: taskName.trim(),
-      due_on: dueDate,
-    })
+    const { data, error } = await supabase
+      .from('deadlines')
+      .insert({
+        subject_id: selectedSubjectId,
+        assignment_name: taskName.trim(),
+        due_on: dueDate,
+      })
+      .select('id')
+      .single()
 
     if (error) {
       setDeadlinesError(error.message)
@@ -152,7 +168,7 @@ function DeadlinesPage() {
     setTaskName('')
     setDueDate('')
     setAddingTask(false)
-    await loadDeadlines()
+    await loadDeadlines(data?.id || null)
   }
 
   async function patchDeadline(deadlineId, patch) {
@@ -166,14 +182,31 @@ function DeadlinesPage() {
   }
 
   async function deleteDeadline(deadlineId) {
-    const { error } = await supabase.from('deadlines').delete().eq('id', deadlineId)
-    if (error) {
-      setDeadlinesError(error.message)
-      return
-    }
+    if (removingRowIds.has(deadlineId)) return
+
+    setRemovingRowIds((previous) => new Set([...previous, deadlineId]))
     if (subjectMenuRowId === deadlineId) setSubjectMenuRowId(null)
     if (editingCell?.id === deadlineId) setEditingCell(null)
-    await loadDeadlines()
+
+    window.setTimeout(async () => {
+      const { error } = await supabase.from('deadlines').delete().eq('id', deadlineId)
+      if (error) {
+        setDeadlinesError(error.message)
+        setRemovingRowIds((previous) => {
+          const next = new Set(previous)
+          next.delete(deadlineId)
+          return next
+        })
+        return
+      }
+
+      setDeadlinesRows((previous) => previous.filter((row) => row.id !== deadlineId))
+      setRemovingRowIds((previous) => {
+        const next = new Set(previous)
+        next.delete(deadlineId)
+        return next
+      })
+    }, 220)
   }
 
   function openSubjectModal() {
@@ -481,8 +514,14 @@ function DeadlinesPage() {
                   </td>
                 </tr>
               ) : (
-                deadlinesRows.map((item) => (
-                  <tr key={item.id}>
+                deadlinesRows.map((item, idx) => (
+                  <tr
+                    key={item.id}
+                    className={`deadlines__row ${
+                      enteringRowIds.has(item.id) ? 'deadlines__row--entering' : ''
+                    } ${removingRowIds.has(item.id) ? 'deadlines__row--deleting' : ''}`}
+                    style={{ '--row-index': idx }}
+                  >
                     <td
                       className="deadlines__editable-cell"
                       onClick={(event) => {

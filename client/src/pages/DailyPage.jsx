@@ -51,6 +51,8 @@ function DailyPage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
 
   const [habits, setHabits] = useState([])
+  const [enteringHabitIds, setEnteringHabitIds] = useState(new Set())
+  const [removingHabitIds, setRemovingHabitIds] = useState(new Set())
   const [logsByKey, setLogsByKey] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -83,7 +85,7 @@ function DailyPage() {
     return groups
   }, [allDates.length])
 
-  async function loadHabits() {
+  async function loadHabits(highlightId = null) {
     const { data, error } = await supabase
       .from('daily_habits')
       .select('id, name, sort_order, created_at')
@@ -97,6 +99,16 @@ function DailyPage() {
 
     const rows = data || []
     setHabits(rows)
+    if (highlightId) {
+      setEnteringHabitIds((previous) => new Set([...previous, highlightId]))
+      window.setTimeout(() => {
+        setEnteringHabitIds((previous) => {
+          const next = new Set(previous)
+          next.delete(highlightId)
+          return next
+        })
+      }, 520)
+    }
     return rows
   }
 
@@ -215,10 +227,14 @@ function DailyPage() {
     }
 
     const nextSort = habits.length
-    const { error } = await supabase.from('daily_habits').insert({
-      name,
-      sort_order: nextSort,
-    })
+    const { data, error } = await supabase
+      .from('daily_habits')
+      .insert({
+        name,
+        sort_order: nextSort,
+      })
+      .select('id')
+      .single()
 
     if (error) {
       if (error.code === '23505') {
@@ -232,7 +248,7 @@ function DailyPage() {
 
     setNewHabitName('')
     setHabitError('')
-    await loadHabits()
+    await loadHabits(data?.id || null)
   }
 
   async function renameHabit(habitId, nextName) {
@@ -283,22 +299,37 @@ function DailyPage() {
   }
 
   async function removeHabit(habitId) {
-    const { error } = await supabase.from('daily_habits').delete().eq('id', habitId)
-    if (error) {
-      setHabitError(error.message)
-      return
-    }
+    if (removingHabitIds.has(habitId)) return
+    setRemovingHabitIds((previous) => new Set([...previous, habitId]))
 
-    setHabits((previous) => previous.filter((habit) => habit.id !== habitId))
-    setLogsByKey((previous) => {
-      const next = {}
-      Object.entries(previous).forEach(([key, value]) => {
-        if (!key.startsWith(`${habitId}:`)) {
-          next[key] = value
-        }
+    window.setTimeout(async () => {
+      const { error } = await supabase.from('daily_habits').delete().eq('id', habitId)
+      if (error) {
+        setHabitError(error.message)
+        setRemovingHabitIds((previous) => {
+          const next = new Set(previous)
+          next.delete(habitId)
+          return next
+        })
+        return
+      }
+
+      setHabits((previous) => previous.filter((habit) => habit.id !== habitId))
+      setLogsByKey((previous) => {
+        const next = {}
+        Object.entries(previous).forEach(([key, value]) => {
+          if (!key.startsWith(`${habitId}:`)) {
+            next[key] = value
+          }
+        })
+        return next
       })
-      return next
-    })
+      setRemovingHabitIds((previous) => {
+        const next = new Set(previous)
+        next.delete(habitId)
+        return next
+      })
+    }, 220)
   }
 
   const dailyProgress = useMemo(
@@ -482,8 +513,14 @@ function DailyPage() {
                   </td>
                 </tr>
               ) : (
-                habits.map((habit) => (
-                  <tr key={habit.id}>
+                habits.map((habit, idx) => (
+                  <tr
+                    key={habit.id}
+                    className={`daily-row ${
+                      enteringHabitIds.has(habit.id) ? 'daily-row--entering' : ''
+                    } ${removingHabitIds.has(habit.id) ? 'daily-row--deleting' : ''}`}
+                    style={{ '--row-index': idx }}
+                  >
                     <td
                       className="daily-habit-name-cell"
                       onClick={() => {

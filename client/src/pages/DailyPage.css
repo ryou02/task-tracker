@@ -16,6 +16,10 @@
 .daily-intro {
   max-width: 1280px;
   margin: 0 auto 20px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: dailyFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.08s;
 }
 
 .daily-intro__eyebrow {
@@ -57,6 +61,10 @@
   overflow: hidden;
   background: var(--app-panel);
   box-shadow: var(--app-shadow);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: dailyFadeUp 0.68s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.18s;
 }
 
 .daily-toolbar {
@@ -295,6 +303,16 @@
   background: var(--app-card-soft);
 }
 
+.daily-row--entering {
+  animation: dailyRowIn 0.36s ease both;
+}
+
+.daily-row--deleting {
+  animation: dailyRowOut 0.22s ease both;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .daily-checkbox {
   display: inline-flex;
   align-items: center;
@@ -497,6 +515,39 @@
   margin: 8px 0 0;
   color: #9f2d20;
   font-size: 0.9rem;
+}
+
+@keyframes dailyFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dailyRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dailyRowOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
 }
 
 @media (max-width: 900px) {
