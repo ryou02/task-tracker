@@ -143,8 +143,7 @@ function CalenderPage() {
             </span>
           </h1>
           <p className="calender__subtitle">
-            Select any day to see assignments due. Colors match each subject from your deadlines
-            setup.
+            Visualize your deadlines on a monthly calendar.
           </p>
         </header>
 

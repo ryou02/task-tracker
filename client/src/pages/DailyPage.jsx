@@ -61,6 +61,7 @@ function DailyPage() {
   const [habitModalOpen, setHabitModalOpen] = useState(false)
   const [newHabitName, setNewHabitName] = useState('')
   const [habitError, setHabitError] = useState('')
+  const [hoveredHabitId, setHoveredHabitId] = useState(null)
   const [editingHabitId, setEditingHabitId] = useState(null)
   const [editingHabitName, setEditingHabitName] = useState('')
 
@@ -536,12 +537,20 @@ function DailyPage() {
                   >
                     <td
                       className="daily-habit-name-cell"
+                      onMouseEnter={() => {
+                        setHoveredHabitId(habit.id)
+                        if (editingHabitId !== habit.id) startHabitInlineEdit(habit)
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredHabitId((previous) => (previous === habit.id ? null : previous))
+                        if (editingHabitId === habit.id) submitHabitInlineEdit(habit.id)
+                      }}
                       onClick={() => {
                         if (editingHabitId !== habit.id) startHabitInlineEdit(habit)
                       }}
                     >
                       <div className="daily-habit-name-wrap">
-                        {editingHabitId === habit.id ? (
+                        {editingHabitId === habit.id || hoveredHabitId === habit.id ? (
                           <input
                             className="daily-habit-inline-input"
                             value={editingHabitName}
@@ -563,7 +572,7 @@ function DailyPage() {
                           </button>
                         )}
 
-                        {editingHabitId === habit.id ? (
+                        {editingHabitId === habit.id || hoveredHabitId === habit.id ? (
                           <button
                             type="button"
                             className="daily-habit-row-delete"
