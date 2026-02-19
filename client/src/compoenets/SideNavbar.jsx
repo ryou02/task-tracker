@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthProvider'
 import ThemeButton from './ThemeButton.jsx'
 import settingsIcon from '../assets/settings.png'
+import logoIcon from '../assets/logo.png'
 import './SideNavbar.css'
 
 function SideNavbar() {
@@ -22,7 +23,10 @@ function SideNavbar() {
   return (
     <aside className="side-navbar" aria-label="App navigation">
       <div className="side-navbar__inner">
-        <div className="side-navbar__brand">task tracker</div>
+        <div className="side-navbar__brand">
+          <img src={logoIcon} alt="" />
+          <span>task tracker</span>
+        </div>
 
         <nav className="side-navbar__links">
           <NavLink to="/dashboard" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>

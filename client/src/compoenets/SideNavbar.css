@@ -18,6 +18,9 @@
 }
 
 .side-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: var(--app-text);
   font-size: 1.02rem;
   font-weight: 600;
@@ -25,6 +28,12 @@
   text-transform: lowercase;
   padding: 8px 8px 12px;
   border-bottom: 1px solid var(--app-border);
+}
+
+.side-navbar__brand img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .side-navbar__links {

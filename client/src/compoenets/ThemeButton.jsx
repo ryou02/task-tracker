@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 
 const STORAGE_KEY = 'task-tracker-theme'
 const THEMES = [
-  { id: 'default', label: 'Default' },
+  { id: 'supabase', label: 'Supabase' },
+  { id: 'default', label: 'Black & White' },
   { id: 'claude', label: 'Claude' },
   { id: 'vintage-paper', label: 'Vintage Paper' },
   { id: 'perpetuity', label: 'Perpetuity' },

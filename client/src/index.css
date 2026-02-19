@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Lora:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Lora:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 * {
@@ -17,4 +17,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  letter-spacing: var(--tracking-normal);
 }
