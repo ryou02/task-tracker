@@ -252,12 +252,20 @@ function DashboardPage() {
             </header>
 
             <div className="dashboard-card__progress-wrap">
-              <div
-                className="dashboard-ring"
-                style={{
-                  background: `conic-gradient(var(--app-accent) ${card.progress}%, var(--app-ring-track) ${card.progress}% 100%)`,
-                }}
-              >
+              <div className="dashboard-ring">
+                <svg className="dashboard-ring__svg" viewBox="0 0 100 100" aria-hidden="true">
+                  <circle className="dashboard-ring__track" cx="50" cy="50" r="42" />
+                  <circle
+                    className="dashboard-ring__progress"
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    style={{
+                      strokeDasharray: `${2 * Math.PI * 42}px`,
+                      strokeDashoffset: `${2 * Math.PI * 42 * (1 - card.progress / 100)}px`,
+                    }}
+                  />
+                </svg>
                 <div className="dashboard-ring__inner">{card.progress}%</div>
               </div>
             </div>
