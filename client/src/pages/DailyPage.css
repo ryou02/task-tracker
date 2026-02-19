@@ -221,14 +221,68 @@
   padding: 6px 0;
 }
 
-.daily-habit-name {
+.daily-habit-name-cell {
   background: #8f654a;
+  padding: 8px 10px;
+}
+
+.daily-habit-name-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.daily-habit-name {
+  border: none;
+  background: transparent;
   color: #fbf8f3;
   text-align: left;
-  padding: 10px 12px;
+  padding: 2px 0;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 500;
+  font-family: inherit;
   white-space: nowrap;
+  cursor: text;
+}
+
+.daily-habit-inline-input {
+  width: 100%;
+  border: 1px solid rgba(251, 248, 243, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbf8f3;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.daily-habit-inline-input:focus {
+  outline: 2px solid rgba(246, 213, 184, 0.7);
+  outline-offset: 1px;
+}
+
+.daily-habit-row-delete {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.daily-habit-row-delete img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.daily-habit-row-delete:hover {
+  opacity: 1;
 }
 
 .daily-checkbox-cell {
@@ -409,24 +463,6 @@
   font-family: inherit;
   font-size: 0.95rem;
   background: #fffdf9;
-}
-
-.daily-habit-modal__delete {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid rgba(159, 45, 32, 0.26);
-  background: #f7d8d3;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  padding: 0;
-}
-
-.daily-habit-modal__delete img {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
 }
 
 .daily-habit-modal__add {

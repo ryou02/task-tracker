@@ -57,6 +57,8 @@ function DailyPage() {
   const [habitModalOpen, setHabitModalOpen] = useState(false)
   const [newHabitName, setNewHabitName] = useState('')
   const [habitError, setHabitError] = useState('')
+  const [editingHabitId, setEditingHabitId] = useState(null)
+  const [editingHabitName, setEditingHabitName] = useState('')
 
   const allDates = useMemo(() => {
     const daysInMonth = new Date(currentYear, selectedMonth + 1, 0).getDate()
@@ -270,6 +272,16 @@ function DailyPage() {
     )
   }
 
+  function startHabitInlineEdit(habit) {
+    setEditingHabitId(habit.id)
+    setEditingHabitName(habit.name)
+  }
+
+  async function submitHabitInlineEdit(habitId) {
+    await renameHabit(habitId, editingHabitName)
+    setEditingHabitId(null)
+  }
+
   async function removeHabit(habitId) {
     const { error } = await supabase.from('daily_habits').delete().eq('id', habitId)
     if (error) {
@@ -472,7 +484,51 @@ function DailyPage() {
               ) : (
                 habits.map((habit) => (
                   <tr key={habit.id}>
-                    <td className="daily-habit-name">{habit.name}</td>
+                    <td
+                      className="daily-habit-name-cell"
+                      onClick={() => {
+                        if (editingHabitId !== habit.id) startHabitInlineEdit(habit)
+                      }}
+                    >
+                      <div className="daily-habit-name-wrap">
+                        {editingHabitId === habit.id ? (
+                          <input
+                            className="daily-habit-inline-input"
+                            value={editingHabitName}
+                            onChange={(event) => setEditingHabitName(event.target.value)}
+                            onBlur={() => submitHabitInlineEdit(habit.id)}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter') submitHabitInlineEdit(habit.id)
+                              if (event.key === 'Escape') setEditingHabitId(null)
+                            }}
+                            autoFocus
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            className="daily-habit-name"
+                            onMouseDown={() => startHabitInlineEdit(habit)}
+                          >
+                            {habit.name}
+                          </button>
+                        )}
+
+                        {editingHabitId === habit.id ? (
+                          <button
+                            type="button"
+                            className="daily-habit-row-delete"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              removeHabit(habit.id)
+                            }}
+                            aria-label={`Delete ${habit.name}`}
+                          >
+                            <img src={trashIcon} alt="" />
+                          </button>
+                        ) : null}
+                      </div>
+                    </td>
                     {allDates.map((date) => {
                       const key = logKey(habit.id, toIsoDate(date))
                       const completed = logsByKey[key]?.done || false
@@ -546,14 +602,6 @@ function DailyPage() {
                     defaultValue={habit.name}
                     onBlur={(event) => renameHabit(habit.id, event.target.value)}
                   />
-                  <button
-                    type="button"
-                    className="daily-habit-modal__delete"
-                    onClick={() => removeHabit(habit.id)}
-                    aria-label={`Delete ${habit.name}`}
-                  >
-                    <img src={trashIcon} alt="" />
-                  </button>
                 </div>
               ))}
             </div>
