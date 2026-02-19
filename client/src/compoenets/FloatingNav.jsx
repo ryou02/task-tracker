@@ -40,31 +40,43 @@ export function FloatingNav({ navItems, className }) {
         visible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0'
       } ${className || ''}`}
     >
-      <div className="flex w-[min(92vw,780px)] items-center justify-center gap-3 rounded-full border border-[#d8d0c3] bg-[#faf7f2]/95 px-3 py-2 shadow-[0_10px_34px_rgba(61,58,50,0.16)] backdrop-blur-md">
+      <div
+        className="flex w-[min(92vw,780px)] items-center justify-center gap-3 rounded-full px-3 py-2 backdrop-blur-md"
+        style={{
+          border: '1px solid var(--app-border)',
+          background: 'color-mix(in srgb, var(--app-panel) 95%, transparent)',
+          boxShadow: 'var(--app-shadow)',
+        }}
+      >
         {navItems.map((navItem, idx) => (
           <Link
             key={`link-${idx}`}
             to={navItem.link}
-            className={`relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+            className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+            style={
               isActivePath(navItem.link)
-                ? 'bg-[#c86f45] text-white'
-                : 'text-[#6f6b61] hover:bg-[#ede7dc] hover:text-[#3d3a32]'
-            }`}
+                ? { background: 'var(--app-accent)', color: 'var(--app-ink-invert)' }
+                : { color: 'var(--app-soft)' }
+            }
           >
             <span className="block sm:hidden">{navItem.icon}</span>
             <span className="hidden sm:block">{navItem.name}</span>
           </Link>
         ))}
 
-        <div className="h-6 w-px bg-[#d8d0c3]" />
+        <div className="h-6 w-px" style={{ background: 'var(--app-border)' }} />
 
         <Link
           to="/login"
-          className={`relative rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
+          className="relative rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
+          style={
             isActivePath('/login')
-              ? 'bg-[#c86f45] text-white hover:bg-[#af5a35] hover:shadow-[0_8px_20px_rgba(200,111,69,0.35)]'
-              : 'bg-[#ede7dc] text-[#5f584d] hover:bg-[#e4dbcb]'
-          }`}
+              ? { background: 'var(--app-accent)', color: 'var(--app-ink-invert)' }
+              : {
+                  background: 'color-mix(in srgb, var(--app-accent) 10%, var(--app-panel))',
+                  color: 'var(--app-text)',
+                }
+          }
         >
           <span>Login</span>
         </Link>

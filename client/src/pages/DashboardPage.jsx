@@ -245,7 +245,7 @@ function DashboardPage() {
               <div
                 className="dashboard-ring"
                 style={{
-                  background: `conic-gradient(#c86f45 ${card.progress}%, #ded6c8 ${card.progress}% 100%)`,
+                  background: `conic-gradient(var(--app-accent) ${card.progress}%, var(--app-ring-track) ${card.progress}% 100%)`,
                 }}
               >
                 <div className="dashboard-ring__inner">{card.progress}%</div>

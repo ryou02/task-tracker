@@ -2,6 +2,7 @@ import './HomePage.css'
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import EncryptedText from '../compoenets/EncryptedText.jsx'
+import ThemeButton from '../compoenets/ThemeButton.jsx'
 
 function HomePage() {
   const navItems = [{ name: 'Home', link: '/' }]
@@ -44,14 +45,14 @@ function HomePage() {
         </h1>
 
         <p className="homepage__subtitle homepage__fade-in-up homepage__fade-in-up--delay-1">
-          Organize daily tasks, track deadlines, and keep your workflow clean
-          with a lightweight dashboard built for students and builders.
+          Organize daily tasks, track deadlines, and keep your workflow clean with a lightweight dashboard built using one of our 43 unique themes.
         </p>
 
         <div className="homepage__actions homepage__fade-in-up homepage__fade-in-up--delay-2">
           <button type="button" className="homepage__button homepage__button--primary">
             Start Planning
           </button>
+          <ThemeButton className="homepage__button homepage__button--primary homepage__theme-button" />
         </div>
 
         <div className="homepage__badges homepage__fade-in-up homepage__fade-in-up--delay-3">

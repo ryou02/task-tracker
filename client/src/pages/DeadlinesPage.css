@@ -3,13 +3,13 @@
 .deadlines-page {
   min-height: 100vh;
   background:
-    linear-gradient(rgba(61, 58, 50, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(61, 58, 50, 0.07) 1px, transparent 1px),
-    radial-gradient(circle at 82% 12%, #fff7ed 0%, transparent 28%),
-    #f4f1ea;
+    linear-gradient(var(--app-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px),
+    radial-gradient(circle at 82% 12%, var(--app-glow) 0%, transparent 28%),
+    var(--app-bg);
   background-size: 30px 30px, 30px 30px, auto, auto;
-  color: #3d3a32;
-  font-family: 'Manrope', sans-serif;
+  color: var(--app-text);
+  font-family: var(--font-sans);
   padding: 92px 22px 40px;
 }
 
@@ -41,14 +41,14 @@
 .deadlines__title-squiggle {
   font-family: 'Ephesis', cursive;
   font-size: 1.14em;
-  color: #c86f45;
+  color: var(--app-accent);
   margin-left: 0.25ch;
 }
 
 .deadlines__subtitle {
   margin: 16px 0 0;
   max-width: 760px;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-size: 1.05rem;
 }
 
@@ -70,20 +70,20 @@
 }
 
 .deadlines__composer input {
-  background: #faf7f2;
-  color: #3d3a32;
+  background: var(--app-panel);
+  color: var(--app-text);
 }
 
 .deadlines__composer > button {
   border: none;
-  background: #c86f45;
+  background: var(--app-accent);
   color: #fff;
   font-weight: 500;
   cursor: pointer;
 }
 
 .deadlines__composer > button:hover {
-  background: #af5a35;
+  background: var(--app-accent-deep);
 }
 
 .deadlines__status {
@@ -101,7 +101,7 @@
   border-radius: 12px;
   border: 1px solid rgba(61, 58, 50, 0.16);
   padding: 10px 12px;
-  background: #faf7f2;
+  background: var(--app-panel);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -180,12 +180,12 @@
   border: 1px solid rgba(61, 58, 50, 0.16);
   border-radius: 16px;
   overflow: visible;
-  background: #faf7f2;
+  background: var(--app-panel);
   box-shadow: 0 20px 35px rgba(61, 58, 50, 0.08);
 }
 
 .deadlines__table-title {
-  background: linear-gradient(135deg, #c86f45, #af5a35);
+  background: linear-gradient(135deg, var(--app-accent), var(--app-accent-deep));
   color: #fff8f1;
   text-align: center;
   font-family: 'Cormorant Garamond', serif;
@@ -270,7 +270,7 @@
 }
 
 .deadlines__subject-pill--other {
-  color: #3d3a32;
+  color: var(--app-text);
   background: #dddeda;
 }
 
@@ -296,7 +296,7 @@
 
 .deadlines__table-empty {
   text-align: center;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-style: italic;
 }
 
@@ -308,7 +308,7 @@
   font-family: inherit;
   font-size: 0.95rem;
   background: #fffdf9;
-  color: #3d3a32;
+  color: var(--app-text);
 }
 
 .deadlines__trash-btn {
@@ -364,7 +364,7 @@
   overflow-y: auto;
   border-radius: 16px;
   border: 1px solid rgba(93, 80, 66, 0.22);
-  background: #faf7f2;
+  background: var(--app-panel);
   box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
   padding: 16px;
 }
@@ -483,7 +483,7 @@
   width: min(100%, 440px);
   border-radius: 14px;
   border: 1px solid rgba(93, 80, 66, 0.24);
-  background: #faf7f2;
+  background: var(--app-panel);
   box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
   padding: 16px;
 }

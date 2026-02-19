@@ -5,7 +5,7 @@
   width: 240px;
   height: 100vh;
   border-right: 1px solid rgba(93, 80, 66, 0.16);
-  background: #faf7f2;
+  background: var(--app-panel);
   z-index: 120;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .side-navbar__brand {
-  color: #3d3a32;
+  color: var(--app-text);
   font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -44,7 +44,7 @@
 
 .side-navbar__link:hover {
   background: #f1e7da;
-  color: #3d3a32;
+  color: var(--app-text);
 }
 
 .side-navbar__link--active {
@@ -60,7 +60,7 @@
   border-radius: 12px;
   padding: 10px 12px;
   background: #fff7ef;
-  color: #af5a35;
+  color: var(--app-accent-deep);
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;

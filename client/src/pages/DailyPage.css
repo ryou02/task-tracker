@@ -4,13 +4,13 @@
   min-height: 100vh;
   padding: 92px 20px 42px;
   background:
-    linear-gradient(rgba(61, 58, 50, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(61, 58, 50, 0.06) 1px, transparent 1px),
-    radial-gradient(circle at 80% 8%, #fff5e9 0%, transparent 28%),
-    #f4f1ea;
+    linear-gradient(var(--app-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px),
+    radial-gradient(circle at 80% 8%, var(--app-glow) 0%, transparent 28%),
+    var(--app-bg);
   background-size: 32px 32px, 32px 32px, auto, auto;
-  color: #3d3a32;
-  font-family: 'Manrope', sans-serif;
+  color: var(--app-text);
+  font-family: var(--font-sans);
 }
 
 .daily-intro {
@@ -36,7 +36,7 @@
 
 .daily-intro__accent {
   margin-left: 0.2ch;
-  color: #c86f45;
+  color: var(--app-accent);
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
   font-weight: 600;
@@ -45,7 +45,7 @@
 .daily-intro__subtitle {
   margin: 14px 0 0;
   max-width: 760px;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-size: 1.04rem;
 }
 
@@ -55,7 +55,7 @@
   border: 1px solid rgba(93, 80, 66, 0.2);
   border-radius: 18px;
   overflow: hidden;
-  background: #faf7f2;
+  background: var(--app-panel);
   box-shadow: 0 20px 36px rgba(61, 58, 50, 0.1);
 }
 
@@ -88,7 +88,7 @@
 }
 
 .daily-month-select option {
-  color: #3d3a32;
+  color: var(--app-text);
 }
 
 .daily-icon-btn {
@@ -141,14 +141,14 @@
   border: none;
   border-radius: 999px;
   padding: 10px 16px;
-  background: #c86f45;
+  background: var(--app-accent);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
 }
 
 .daily-add-btn:hover {
-  background: #af5a35;
+  background: var(--app-accent-deep);
 }
 
 .daily-explainer {
@@ -160,7 +160,7 @@
 
 .daily-explainer p {
   margin: 0;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-size: 0.96rem;
 }
 
@@ -308,8 +308,8 @@
 }
 
 .daily-checkbox--done {
-  border-color: #c86f45;
-  background: #c86f45;
+  border-color: var(--app-accent);
+  background: var(--app-accent);
   color: #fff;
 }
 
@@ -319,7 +319,7 @@
 
 .daily-empty {
   background: #fff8ef;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-style: italic;
   padding: 16px;
 }
@@ -345,7 +345,7 @@
 
 .daily-progress-head p {
   margin: 0;
-  color: #6f6b61;
+  color: var(--app-soft);
   font-weight: 600;
 }
 
@@ -391,7 +391,7 @@
 
 .daily-line-path {
   fill: none;
-  stroke: #c86f45;
+  stroke: var(--app-accent);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -411,7 +411,7 @@
   width: min(100%, 540px);
   border-radius: 14px;
   border: 1px solid rgba(93, 80, 66, 0.24);
-  background: #faf7f2;
+  background: var(--app-panel);
   box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
   padding: 14px;
 }
@@ -483,7 +483,7 @@
 .daily-habit-modal__add button {
   border-radius: 10px;
   border: none;
-  background: #c86f45;
+  background: var(--app-accent);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

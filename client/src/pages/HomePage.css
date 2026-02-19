@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Ephesis&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,600&display=swap');
 
 :root {
-  --bg-cream: #f4f1ea;
-  --bg-paper: #faf7f2;
-  --text-ink: #3d3a32;
-  --text-soft: #6f6b61;
-  --accent-clay: #c86f45;
-  --accent-clay-deep: #af5a35;
-  --line-soft: rgba(61, 58, 50, 0.08);
-  --dark-panel: #131416;
+  --bg-cream: var(--app-bg);
+  --bg-paper: var(--app-panel);
+  --text-ink: var(--app-text);
+  --text-soft: var(--app-soft);
+  --accent-clay: var(--app-accent);
+  --accent-clay-deep: var(--app-accent-deep);
+  --line-soft: var(--app-grid-line);
+  --dark-panel: var(--app-dark-panel);
 }
 
 .homepage {
@@ -18,11 +18,11 @@
   background:
     linear-gradient(var(--line-soft) 1px, transparent 1px),
     linear-gradient(90deg, var(--line-soft) 1px, transparent 1px),
-    radial-gradient(circle at 85% 15%, #fff7ed 0%, transparent 28%),
+    radial-gradient(circle at 85% 15%, var(--app-glow) 0%, transparent 28%),
     var(--bg-cream);
   background-size: 32px 32px, 32px 32px, auto, auto;
   color: var(--text-ink);
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .homepage::before {
@@ -33,7 +33,11 @@
   right: -120px;
   top: -130px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(200, 111, 69, 0.2) 0%, rgba(200, 111, 69, 0) 70%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--app-accent) 18%, transparent) 0%,
+    transparent 70%
+  );
   pointer-events: none;
   animation: homepageBlobShift 12s ease-in-out infinite alternate;
 }
@@ -96,11 +100,11 @@
 }
 
 .homepage__encrypted-pending {
-  color: rgba(61, 58, 50, 0.52);
+  color: color-mix(in srgb, var(--text-ink) 54%, transparent);
 }
 
 .homepage__encrypted-final {
-  color: #2f2c26;
+  color: color-mix(in srgb, var(--text-ink) 90%, black 10%);
 }
 
 .homepage__subtitle {
@@ -131,15 +135,15 @@
   position: relative;
   overflow: hidden;
   background: var(--accent-clay);
-  color: #fff;
-  box-shadow: 0 7px 24px rgba(200, 111, 69, 0.35);
+  color: var(--app-ink-invert);
+  box-shadow: var(--app-shadow);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .homepage__button--primary:hover {
   background: var(--accent-clay-deep);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(200, 111, 69, 0.34);
+  box-shadow: 0 18px 30px color-mix(in srgb, var(--app-accent) 30%, transparent);
 }
 
 .homepage__button--primary::after {
@@ -155,6 +159,59 @@
   background: var(--bg-paper);
   color: var(--text-ink);
   border: 1px solid rgba(61, 58, 50, 0.15);
+}
+
+.homepage__theme-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.theme-dropdown__caret {
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.theme-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  border-radius: 14px;
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow);
+  padding: 8px;
+  z-index: 80;
+}
+
+.theme-dropdown__option {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--app-text);
+  cursor: pointer;
+}
+
+.theme-dropdown__option:hover {
+  background: var(--app-strip);
+  color: var(--app-text);
+}
+
+.theme-dropdown__option--active {
+  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
+  color: var(--app-text);
 }
 
 .homepage__badges {
