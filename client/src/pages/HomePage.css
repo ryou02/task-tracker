@@ -12,6 +12,8 @@
 }
 
 .homepage {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
   background:
     linear-gradient(var(--line-soft) 1px, transparent 1px),
@@ -23,7 +25,22 @@
   font-family: 'Manrope', sans-serif;
 }
 
+.homepage::before {
+  content: '';
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  right: -120px;
+  top: -130px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(200, 111, 69, 0.2) 0%, rgba(200, 111, 69, 0) 70%);
+  pointer-events: none;
+  animation: homepageBlobShift 12s ease-in-out infinite alternate;
+}
+
 .homepage__hero {
+  position: relative;
+  z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 178px 28px 40px;
@@ -45,6 +62,11 @@
   font-weight: 600;
 }
 
+.homepage__beautiful-generate {
+  display: inline-block;
+  line-height: 1;
+}
+
 .homepage__headline-highlight {
   color: var(--accent-clay);
 }
@@ -55,6 +77,7 @@
   font-family: 'Ephesis', cursive;
   font-size: 1.18em;
   font-weight: 400;
+  animation: homepageSquiggleWiggle 4.4s ease-in-out infinite;
 }
 
 .homepage__subtitle {
@@ -82,13 +105,27 @@
 }
 
 .homepage__button--primary {
+  position: relative;
+  overflow: hidden;
   background: var(--accent-clay);
   color: #fff;
   box-shadow: 0 7px 24px rgba(200, 111, 69, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .homepage__button--primary:hover {
   background: var(--accent-clay-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(200, 111, 69, 0.34);
+}
+
+.homepage__button--primary::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0) 24%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 74%);
+  transform: translateX(-120%);
+  animation: homepageShimmer 3.4s ease-in-out infinite;
 }
 
 .homepage__button--ghost {
@@ -110,6 +147,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  opacity: 0;
+  animation: homepageFadeInUp 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: var(--badge-delay, 0.2s);
 }
 
 .homepage__badge-dot {
@@ -117,9 +157,12 @@
   height: 10px;
   border-radius: 50%;
   background: var(--accent-clay);
+  animation: homepagePulseDot 2.1s ease-in-out infinite;
 }
 
 .homepage__lower {
+  position: relative;
+  z-index: 1;
   margin-top: 32px;
   background: var(--dark-panel);
   color: #f2f0ed;
@@ -166,14 +209,118 @@
   padding: 12px 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 1.05rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: homepageFadeInUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: var(--menu-delay, 0.35s);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .homepage__menu-item:last-child {
   border-bottom: 0;
 }
 
+.homepage__menu-item:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .homepage__menu-item span:last-child {
   color: #9a9893;
+}
+
+.homepage__fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: homepageFadeInUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.homepage__fade-in-up--delay-1 {
+  animation-delay: 0.15s;
+}
+
+.homepage__fade-in-up--delay-2 {
+  animation-delay: 0.28s;
+}
+
+.homepage__fade-in-up--delay-3 {
+  animation-delay: 0.42s;
+}
+
+.homepage__float-slow {
+  animation: homepageFloat 6.2s ease-in-out infinite;
+}
+
+@keyframes homepageFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes homepageBlobShift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-34px, 22px, 0) scale(1.08);
+  }
+}
+
+@keyframes homepageShimmer {
+  0%,
+  70% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes homepagePulseDot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.84);
+    opacity: 0.78;
+  }
+}
+
+@keyframes homepageFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes homepageSquiggleWiggle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-1px) rotate(-1deg);
+  }
+  65% {
+    transform: translateY(1px) rotate(1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 @media (max-width: 900px) {

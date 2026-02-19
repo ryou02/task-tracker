@@ -1,0 +1,38 @@
+.text-generate {
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.text-generate__word {
+  display: inline-block;
+  opacity: 0;
+  animation-name: textGenerateReveal;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.22, 0.77, 0.24, 1);
+  will-change: opacity, transform, filter;
+}
+
+.text-generate__word--blur {
+  filter: blur(10px);
+}
+
+@keyframes textGenerateReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-generate__word {
+    opacity: 1;
+    filter: none;
+    animation: none;
+  }
+}
