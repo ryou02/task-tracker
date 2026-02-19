@@ -1,106 +1,156 @@
+import { useEffect, useMemo, useState } from 'react'
+
+import { supabase } from '../lib/supabase'
 import './DashboardPage.css'
 
-const dayCards = [
-  {
-    day: 'Monday',
-    date: '22.01.2026',
-    progress: 67,
-    tasks: [
-      { name: 'Outline project plan', done: true },
-      { name: 'Read mat136 notes', done: true },
-      { name: 'Reply to team messages', done: false },
-      { name: 'Gym workout', done: true },
-      { name: 'Budget update', done: false },
-    ],
-  },
-  {
-    day: 'Tuesday',
-    date: '23.01.2026',
-    progress: 83,
-    tasks: [
-      { name: 'Finish weekly slides', done: true },
-      { name: 'Buy groceries', done: true },
-      { name: 'Deep clean desk', done: false },
-      { name: 'Wake up at 6:00', done: true },
-      { name: 'Read 20 pages', done: true },
-    ],
-  },
-  {
-    day: 'Wednesday',
-    date: '24.01.2026',
-    progress: 92,
-    tasks: [
-      { name: 'Film content clip', done: true },
-      { name: 'Water plants', done: true },
-      { name: 'Quiz revision', done: true },
-      { name: 'Cold shower', done: true },
-      { name: 'Cook healthy meal', done: false },
-    ],
-  },
-  {
-    day: 'Thursday',
-    date: '25.01.2026',
-    progress: 100,
-    tasks: [
-      { name: 'Check email inbox', done: true },
-      { name: 'Review financial report', done: true },
-      { name: 'Team call', done: true },
-      { name: 'Read before bed', done: true },
-      { name: 'Journal notes', done: true },
-    ],
-  },
-  {
-    day: 'Friday',
-    date: '26.01.2026',
-    progress: 92,
-    tasks: [
-      { name: 'Prep for deadlines', done: true },
-      { name: 'Daily planner review', done: true },
-      { name: 'Code session', done: true },
-      { name: 'Social detox', done: false },
-      { name: 'Weekly reset', done: true },
-    ],
-  },
-  {
-    day: 'Saturday',
-    date: '27.01.2026',
-    progress: 74,
-    tasks: [
-      { name: 'Morning stretch', done: true },
-      { name: 'Laundry + cleanup', done: true },
-      { name: 'Meal prep', done: false },
-      { name: 'Read 30 minutes', done: true },
-      { name: 'Plan next week', done: false },
-    ],
-  },
-  {
-    day: 'Sunday',
-    date: '28.01.2026',
-    progress: 88,
-    tasks: [
-      { name: 'Weekly reflection', done: true },
-      { name: 'Reset workspace', done: true },
-      { name: 'Family call', done: true },
-      { name: 'Deadline review', done: false },
-      { name: 'Early bedtime', done: true },
-    ],
-  },
-]
+function toIsoDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
-const upcomingTasks = [
-  { name: 'MAT136 Webwork Set 5', subject: 'mat136', due: 'Sunday, Feb 22', daysLeft: 5 },
-  { name: 'SOC100 Quiz', subject: 'soc100', due: 'Monday, Feb 23', daysLeft: 6 },
-  { name: 'MAT223 CAP', subject: 'mat223', due: 'Monday, Feb 23', daysLeft: 6 },
-  { name: 'AI internship application', subject: 'other', due: 'Tuesday, Feb 24', daysLeft: 7 },
-]
+function getMonday(date) {
+  const copy = new Date(date)
+  copy.setHours(0, 0, 0, 0)
+  const mondayOffset = (copy.getDay() + 6) % 7
+  copy.setDate(copy.getDate() - mondayOffset)
+  return copy
+}
 
-function daysLeftClass(daysLeft) {
-  if (daysLeft <= 7) return 'dashboard-days-cell--urgent'
-  if (daysLeft <= 14) return 'dashboard-days-cell--soon'
-  return 'dashboard-days-cell--later'
+function formatCardDate(date) {
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
+function formatDueLabel(dateString) {
+  if (!dateString) return ''
+  const date = new Date(`${dateString}T00:00:00`)
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+function computeDaysLeft(dateString) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const due = new Date(`${dateString}T00:00:00`)
+  due.setHours(0, 0, 0, 0)
+  return Math.round((due - today) / 86400000)
 }
 
 function DashboardPage() {
+  const [habits, setHabits] = useState([])
+  const [logsByKey, setLogsByKey] = useState({})
+  const [upcomingTasks, setUpcomingTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const weekDates = useMemo(() => {
+    const monday = getMonday(new Date())
+    return Array.from({ length: 7 }, (_, idx) => {
+      const date = new Date(monday)
+      date.setDate(monday.getDate() + idx)
+      return date
+    })
+  }, [])
+
+  async function loadDashboardData() {
+    setLoading(true)
+    setError('')
+
+    const startIso = toIsoDate(weekDates[0])
+    const endIso = toIsoDate(weekDates[weekDates.length - 1])
+
+    const [habitsResponse, logsResponse, deadlinesResponse] = await Promise.all([
+      supabase
+        .from('daily_habits')
+        .select('id, name, sort_order, created_at')
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: true }),
+      supabase
+        .from('daily_habit_logs')
+        .select('habit_id, entry_date, done')
+        .gte('entry_date', startIso)
+        .lte('entry_date', endIso),
+      supabase
+        .from('deadlines')
+        .select('id, assignment_name, due_on, subjects(name, color_bg, color_text)')
+        .gte('due_on', toIsoDate(new Date()))
+        .order('due_on', { ascending: true })
+        .limit(8),
+    ])
+
+    if (habitsResponse.error) {
+      setError(habitsResponse.error.message)
+      setLoading(false)
+      return
+    }
+    if (logsResponse.error) {
+      setError(logsResponse.error.message)
+      setLoading(false)
+      return
+    }
+    if (deadlinesResponse.error) {
+      setError(deadlinesResponse.error.message)
+      setLoading(false)
+      return
+    }
+
+    setHabits(habitsResponse.data || [])
+
+    const nextLogs = {}
+    ;(logsResponse.data || []).forEach((row) => {
+      nextLogs[`${row.habit_id}:${row.entry_date}`] = row.done
+    })
+    setLogsByKey(nextLogs)
+
+    setUpcomingTasks(
+      (deadlinesResponse.data || []).map((row) => ({
+        id: row.id,
+        name: row.assignment_name,
+        subject: row.subjects?.name || 'subject',
+        color_bg: row.subjects?.color_bg || '#DDDeda',
+        color_text: row.subjects?.color_text || '#3D3A32',
+        due: formatDueLabel(row.due_on),
+        daysLeft: computeDaysLeft(row.due_on),
+      })),
+    )
+
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    loadDashboardData()
+  }, [])
+
+  const dayCards = useMemo(
+    () =>
+      weekDates.map((date) => {
+        const entryDate = toIsoDate(date)
+        const tasks = habits.map((habit) => ({
+          name: habit.name,
+          done: Boolean(logsByKey[`${habit.id}:${entryDate}`]),
+        }))
+        const completed = tasks.filter((task) => task.done).length
+        const progress = habits.length === 0 ? 0 : Math.round((completed / habits.length) * 100)
+
+        return {
+          day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+          date: formatCardDate(date),
+          progress,
+          tasks,
+          completed,
+          notCompleted: Math.max(0, tasks.length - completed),
+        }
+      }),
+    [habits, logsByKey, weekDates],
+  )
+
   return (
     <main className="dashboard-page">
       <section className="dashboard-header">
@@ -110,35 +160,38 @@ function DashboardPage() {
           <span className="dashboard-header__accent"> dashboard</span>
         </h1>
         <p className="dashboard-header__subtitle">
-          Review your daily completion rates, keep your priorities visible, and
-          stay ahead of your upcoming deadlines.
+          Daily cards now come directly from your habits tracker for the current week.
+          Completion rings use checked habits, and each tasks list is your habits for that day.
         </p>
       </section>
 
+      {error ? <p className="dashboard-error">{error}</p> : null}
+
       <section className="dashboard-cards" aria-label="Daily summary cards">
-        {dayCards.map((card) => {
-          const completed = card.tasks.filter((task) => task.done).length
-          const notCompleted = card.tasks.length - completed
+        {dayCards.map((card) => (
+          <article key={card.day} className="dashboard-card">
+            <header className="dashboard-card__head">
+              <h2>{card.day}</h2>
+              <p>{card.date}</p>
+            </header>
 
-          return (
-            <article key={card.day} className="dashboard-card">
-              <header className="dashboard-card__head">
-                <h2>{card.day}</h2>
-                <p>{card.date}</p>
-              </header>
-
-              <div className="dashboard-card__progress-wrap">
-                <div
-                  className="dashboard-ring"
-                  style={{
-                    background: `conic-gradient(#c86f45 ${card.progress}%, #ded6c8 ${card.progress}% 100%)`,
-                  }}
-                >
-                  <div className="dashboard-ring__inner">{card.progress}%</div>
-                </div>
+            <div className="dashboard-card__progress-wrap">
+              <div
+                className="dashboard-ring"
+                style={{
+                  background: `conic-gradient(#c86f45 ${card.progress}%, #ded6c8 ${card.progress}% 100%)`,
+                }}
+              >
+                <div className="dashboard-ring__inner">{card.progress}%</div>
               </div>
+            </div>
 
-              <h3 className="dashboard-card__tasks-title">Tasks</h3>
+            <h3 className="dashboard-card__tasks-title">Tasks</h3>
+            {loading ? (
+              <p className="dashboard-card__empty">Loading...</p>
+            ) : card.tasks.length === 0 ? (
+              <p className="dashboard-card__empty">No habits yet.</p>
+            ) : (
               <ul className="dashboard-card__tasks">
                 {card.tasks.map((task) => (
                   <li key={task.name}>
@@ -149,14 +202,14 @@ function DashboardPage() {
                   </li>
                 ))}
               </ul>
+            )}
 
-              <footer className="dashboard-card__footer">
-                <span>Completed {completed}</span>
-                <span>Not completed {notCompleted}</span>
-              </footer>
-            </article>
-          )
-        })}
+            <footer className="dashboard-card__footer">
+              <span>Completed {card.completed}</span>
+              <span>Not completed {card.notCompleted}</span>
+            </footer>
+          </article>
+        ))}
       </section>
 
       <section className="dashboard-upcoming" aria-label="Upcoming tasks due">
@@ -176,20 +229,34 @@ function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {upcomingTasks.map((task) => (
-                <tr key={task.name}>
-                  <td>{task.name}</td>
-                  <td>
-                    <span className={`dashboard-subject dashboard-subject--${task.subject}`}>
-                      {task.subject}
-                    </span>
-                  </td>
-                  <td>{task.due}</td>
-                  <td className={`dashboard-days-cell ${daysLeftClass(task.daysLeft)}`}>
-                    <span className="dashboard-days-left">{task.daysLeft}</span>
+              {upcomingTasks.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="dashboard-upcoming__empty">
+                    No upcoming deadlines.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                upcomingTasks.map((task) => (
+                  <tr key={task.id}>
+                    <td>{task.name}</td>
+                    <td>
+                      <span
+                        className="dashboard-subject"
+                        style={{
+                          background: task.color_bg,
+                          color: task.color_text,
+                        }}
+                      >
+                        {task.subject}
+                      </span>
+                    </td>
+                    <td>{task.due}</td>
+                    <td className="dashboard-days-cell">
+                      <span className="dashboard-days-left">{task.daysLeft}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
