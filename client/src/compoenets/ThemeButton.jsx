@@ -5,6 +5,7 @@ const THEMES = [
   { id: 'default', label: 'Default' },
   { id: 'claude', label: 'Claude' },
   { id: 'vintage-paper', label: 'Vintage Paper' },
+  { id: 'perpetuity', label: 'Perpetuity' },
 ]
 
 function readTheme() {
