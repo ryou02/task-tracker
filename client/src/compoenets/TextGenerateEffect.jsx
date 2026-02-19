@@ -6,6 +6,7 @@ function TextGenerateEffect({
   filter = true,
   duration = 0.5,
   stagger = 0.18,
+  startDelay = 0,
 }) {
   const wordsArray = words.split(' ').filter(Boolean)
 
@@ -16,7 +17,7 @@ function TextGenerateEffect({
           key={`${word}-${idx}`}
           className={`text-generate__word ${filter ? 'text-generate__word--blur' : ''}`}
           style={{
-            animationDelay: `${idx * stagger}s`,
+            animationDelay: `${startDelay + idx * stagger}s`,
             animationDuration: `${duration}s`,
           }}
         >

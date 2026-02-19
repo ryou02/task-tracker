@@ -1,6 +1,7 @@
 import './HomePage.css'
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
+import EncryptedText from '../compoenets/EncryptedText.jsx'
 
 function HomePage() {
   const navItems = [{ name: 'Home', link: '/' }]
@@ -24,11 +25,22 @@ function HomePage() {
               className="homepage__beautiful-generate"
               duration={0.55}
               stagger={0.2}
+              startDelay={0.55}
             />
+            <span className="homepage__beautiful-streak" aria-hidden="true" />
           </span>
           <br />
           <span className="homepage__headline-highlight">Task Manager</span>
-          <span className="homepage__headline-squiggle"> faster</span>
+          <span className="homepage__headline-squiggle">
+            {' '}
+            <EncryptedText
+              text="faster"
+              encryptedClassName="homepage__encrypted-pending"
+              revealedClassName="homepage__encrypted-final"
+              revealDelayMs={52}
+              startDelayMs={850}
+            />
+          </span>
         </h1>
 
         <p className="homepage__subtitle homepage__fade-in-up homepage__fade-in-up--delay-1">
