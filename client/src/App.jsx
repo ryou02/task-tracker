@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import DeadlinesPage from './pages/DeadlinesPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import PomodoroPage from './pages/PomodoroPage.jsx'
 import AppShell from './compoenets/AppShell.jsx'
 import ProtectedRoute from './compoenets/ProtectedRoute.jsx'
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/daily" element={<DailyPage />} />
           <Route path="/calender" element={<CalenderPage />} />
           <Route path="/calendar" element={<Navigate to="/calender" replace />} />
+          <Route path="/pomodoro" element={<PomodoroPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
