@@ -61,6 +61,7 @@ function CalenderPage() {
   const [selectedDate, setSelectedDate] = useState(initialDate)
   const [deadlinesByDate, setDeadlinesByDate] = useState({})
   const [loading, setLoading] = useState(true)
+  const [initialLoading, setInitialLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -82,6 +83,7 @@ function CalenderPage() {
         setError(monthError.message)
         setDeadlinesByDate({})
         setLoading(false)
+        setInitialLoading(false)
         return
       }
 
@@ -100,6 +102,7 @@ function CalenderPage() {
 
       setDeadlinesByDate(grouped)
       setLoading(false)
+      setInitialLoading(false)
     }
 
     loadMonth()
@@ -117,6 +120,12 @@ function CalenderPage() {
 
   return (
     <main className="calender-page">
+      {initialLoading ? (
+        <div className="calender__first-load" role="status" aria-live="polite">
+          <div className="calender__first-load-orb" aria-hidden="true" />
+          <p>Loading your calendar...</p>
+        </div>
+      ) : null}
       <section className="calender">
         <header className="calender__header">
           <p className="calender__eyebrow">Planner</p>

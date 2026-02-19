@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Ephesis&display=swap');
 
 .calender-page {
+  position: relative;
   min-height: 100vh;
   padding: 34px 24px 40px;
   background:
@@ -13,8 +14,36 @@
   font-family: var(--font-sans);
 }
 
+.calender__first-load {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  background: color-mix(in srgb, var(--app-bg) 92%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.calender__first-load p {
+  margin: 0;
+  color: var(--app-text);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.calender__first-load-orb {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--app-accent) 24%, transparent);
+  border-top-color: var(--app-accent);
+  animation: calenderSpin 0.9s linear infinite;
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--app-accent) 8%, transparent);
+}
+
 .calender {
-  max-width: 1240px;
+  max-width: 1360px;
   margin: 0 auto;
 }
 
@@ -79,7 +108,7 @@
 }
 
 .calender__grid-card {
-  padding: 14px;
+  padding: 12px;
 }
 
 .calender__toolbar {
@@ -87,12 +116,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .calender__toolbar h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
 }
 
 .calender__month-btn {
@@ -100,9 +129,9 @@
   border-radius: 10px;
   background: var(--app-strip);
   color: var(--app-text);
-  padding: 8px 12px;
+  padding: 6px 10px;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   cursor: pointer;
 }
 
@@ -113,29 +142,29 @@
 .calender__weekday-row {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .calender__weekday-row span {
   text-align: center;
   color: var(--app-soft);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 600;
 }
 
 .calender__grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .calender__cell {
   border: 1px solid var(--app-border);
   background: var(--app-card-soft);
-  border-radius: 12px;
-  min-height: 168px;
-  padding: 8px;
+  border-radius: 10px;
+  min-height: 138px;
+  padding: 7px;
   text-align: left;
   cursor: pointer;
   color: var(--app-text);
@@ -143,7 +172,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 6px;
 }
 
 .calender__cell:hover {
@@ -169,7 +198,7 @@
 
 .calender__day {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .calender__day--today {
@@ -178,20 +207,20 @@
 
 .calender__cell-tasks {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .calender__cell-task-card {
   border: 1px solid var(--app-border);
-  border-radius: 12px;
+  border-radius: 10px;
   background: color-mix(in srgb, var(--app-panel) 92%, white);
   box-shadow: 0 1px 2px color-mix(in srgb, var(--app-text) 10%, transparent);
-  padding: 8px 8px 7px;
+  padding: 6px 6px 5px;
 }
 
 .calender__cell-task-name {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -199,17 +228,17 @@
 .calender__cell-task-subject {
   display: inline-flex;
   align-items: center;
-  margin-top: 8px;
-  border-radius: 8px;
-  padding: 2px 8px;
-  font-size: 0.74rem;
+  margin-top: 6px;
+  border-radius: 7px;
+  padding: 2px 7px;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: lowercase;
 }
 
 .calender__cell-more {
   color: var(--app-soft);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -239,16 +268,16 @@
   }
 
   .calender__cell {
-    min-height: 132px;
+    min-height: 112px;
     padding: 6px;
   }
 
   .calender__cell-task-name {
-    font-size: 0.82rem;
+    font-size: 0.75rem;
   }
 
   .calender__cell-task-subject {
-    font-size: 0.7rem;
+    font-size: 0.64rem;
   }
 }
 
@@ -260,5 +289,14 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes calenderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
