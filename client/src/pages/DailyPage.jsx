@@ -216,7 +216,7 @@ function DailyPage() {
     const name = newHabitName.trim()
     if (!name) {
       setHabitError('Enter a habit name.')
-      return
+      return false
     }
 
     const normalizedName = name.toLowerCase()
@@ -225,7 +225,7 @@ function DailyPage() {
     )
     if (exists) {
       setHabitError('Habit already exists.')
-      return
+      return false
     }
 
     const nextSort = habits.length
@@ -245,12 +245,13 @@ function DailyPage() {
         setHabitError(error.message)
       }
       await loadHabits()
-      return
+      return false
     }
 
     setNewHabitName('')
     setHabitError('')
     await loadHabits(data?.id || null)
+    return true
   }
 
   async function renameHabit(habitId, nextName) {
@@ -466,6 +467,7 @@ function DailyPage() {
               onClick={() => {
                 setHabitModalOpen(true)
                 setHabitError('')
+                setNewHabitName('')
               }}
             >
               + Add habit
@@ -642,26 +644,26 @@ function DailyPage() {
               </button>
             </header>
 
-            <div className="daily-habit-modal__list">
-              {habits.map((habit) => (
-                <div key={habit.id} className="daily-habit-modal__row">
-                  <input
-                    className="daily-habit-modal__name"
-                    defaultValue={habit.name}
-                    onBlur={(event) => renameHabit(habit.id, event.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
-
             <div className="daily-habit-modal__add">
               <input
                 type="text"
                 placeholder="Habit name"
                 value={newHabitName}
+                autoComplete="off"
                 onChange={(event) => setNewHabitName(event.target.value)}
+                onKeyDown={async (event) => {
+                  if (event.key !== 'Enter') return
+                  const created = await addHabit()
+                  if (created) setHabitModalOpen(false)
+                }}
               />
-              <button type="button" onClick={addHabit}>
+              <button
+                type="button"
+                onClick={async () => {
+                  const created = await addHabit()
+                  if (created) setHabitModalOpen(false)
+                }}
+              >
                 Add
               </button>
             </div>
