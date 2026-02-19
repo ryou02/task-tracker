@@ -20,7 +20,7 @@
 
 .daily-intro__eyebrow {
   margin: 0;
-  color: #7a7568;
+  color: var(--app-soft);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.76rem;
@@ -52,16 +52,20 @@
 .daily-card {
   max-width: 1280px;
   margin: 0 auto;
-  border: 1px solid rgba(93, 80, 66, 0.2);
+  border: 1px solid var(--app-border);
   border-radius: 18px;
   overflow: hidden;
   background: var(--app-panel);
-  box-shadow: 0 20px 36px rgba(61, 58, 50, 0.1);
+  box-shadow: var(--app-shadow);
 }
 
 .daily-toolbar {
-  background: linear-gradient(140deg, #4a3a2e 0%, #3d3128 48%, #30261f 100%);
-  color: #f8f6f1;
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--app-accent) 78%, white 22%) 0%,
+    color-mix(in srgb, var(--app-accent-deep) 74%, white 26%) 100%
+  );
+  color: var(--app-ink-invert);
   padding: 18px 18px 16px;
   display: flex;
   align-items: center;
@@ -77,11 +81,11 @@
 }
 
 .daily-month-select {
-  border: 1px solid rgba(250, 247, 242, 0.34);
+  border: 1px solid color-mix(in srgb, var(--app-ink-invert) 40%, transparent);
   border-radius: 10px;
   padding: 7px 10px;
-  background: rgba(250, 247, 242, 0.12);
-  color: #f8f6f1;
+  background: color-mix(in srgb, var(--app-panel) 14%, transparent);
+  color: var(--app-ink-invert);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
@@ -95,9 +99,9 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8f6f1;
+  border: 1px solid color-mix(in srgb, var(--app-ink-invert) 42%, transparent);
+  background: color-mix(in srgb, var(--app-panel) 12%, transparent);
+  color: var(--app-ink-invert);
   font-size: 1.15rem;
   cursor: pointer;
 }
@@ -117,8 +121,8 @@
 }
 
 .daily-metric {
-  background: rgba(250, 247, 242, 0.08);
-  border: 1px solid rgba(250, 247, 242, 0.24);
+  background: color-mix(in srgb, var(--app-panel) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-ink-invert) 32%, transparent);
   border-radius: 10px;
   padding: 8px 12px;
   display: grid;
@@ -142,7 +146,7 @@
   border-radius: 999px;
   padding: 10px 16px;
   background: var(--app-accent);
-  color: #fff;
+  color: var(--app-ink-invert);
   font-weight: 700;
   cursor: pointer;
 }
@@ -152,9 +156,9 @@
 }
 
 .daily-explainer {
-  border-top: 1px solid rgba(93, 80, 66, 0.16);
-  border-bottom: 1px solid rgba(93, 80, 66, 0.16);
-  background: #f3ebdf;
+  border-top: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-strip);
   padding: 12px 18px;
 }
 
@@ -182,22 +186,22 @@
 
 .daily-table th,
 .daily-table td {
-  border: 1px solid rgba(93, 80, 66, 0.14);
+  border: 1px solid var(--app-border);
   text-align: center;
 }
 
 .daily-my-habits {
   width: 220px;
-  background: #7b563f;
-  color: #fbf8f3;
+  background: color-mix(in srgb, var(--app-accent) 58%, var(--app-panel));
+  color: var(--app-ink-invert);
   font-size: 1.7rem;
   font-family: 'Cormorant Garamond', serif;
   padding: 16px 10px;
 }
 
 .daily-week-group {
-  background: #6a4a35;
-  color: #f5efe8;
+  background: color-mix(in srgb, var(--app-accent) 70%, var(--app-panel));
+  color: var(--app-ink-invert);
   font-size: 0.83rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -206,23 +210,23 @@
 }
 
 .daily-day-label {
-  background: #efe3d4;
-  color: #5c4f43;
+  background: var(--app-strip);
+  color: var(--app-text);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 5px 0;
 }
 
 .daily-day-number {
-  background: #f6efe6;
-  color: #6f6054;
+  background: var(--app-strip-2);
+  color: var(--app-soft);
   font-size: 0.78rem;
   font-weight: 700;
   padding: 6px 0;
 }
 
 .daily-habit-name-cell {
-  background: #8f654a;
+  background: color-mix(in srgb, var(--app-accent) 50%, var(--app-panel));
   padding: 8px 10px;
 }
 
@@ -236,7 +240,7 @@
 .daily-habit-name {
   border: none;
   background: transparent;
-  color: #fbf8f3;
+  color: var(--app-ink-invert);
   text-align: left;
   padding: 2px 0;
   font-size: 0.92rem;
@@ -248,9 +252,9 @@
 
 .daily-habit-inline-input {
   width: 100%;
-  border: 1px solid rgba(251, 248, 243, 0.5);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fbf8f3;
+  border: 1px solid color-mix(in srgb, var(--app-ink-invert) 45%, transparent);
+  background: color-mix(in srgb, var(--app-panel) 14%, transparent);
+  color: var(--app-ink-invert);
   border-radius: 8px;
   padding: 6px 8px;
   font-size: 0.9rem;
@@ -258,7 +262,7 @@
 }
 
 .daily-habit-inline-input:focus {
-  outline: 2px solid rgba(246, 213, 184, 0.7);
+  outline: 2px solid color-mix(in srgb, var(--app-accent) 42%, transparent);
   outline-offset: 1px;
 }
 
@@ -288,7 +292,7 @@
 .daily-checkbox-cell {
   width: 28px;
   height: 28px;
-  background: #fffdfa;
+  background: var(--app-card-soft);
 }
 
 .daily-checkbox {
@@ -298,8 +302,8 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  border: 1px solid #a7927c;
-  background: #fff;
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-panel);
   color: transparent;
   font-size: 0.76rem;
   font-weight: 800;
@@ -310,15 +314,15 @@
 .daily-checkbox--done {
   border-color: var(--app-accent);
   background: var(--app-accent);
-  color: #fff;
+  color: var(--app-ink-invert);
 }
 
 .daily-checkbox--todo {
-  background: #fff;
+  background: var(--app-panel);
 }
 
 .daily-empty {
-  background: #fff8ef;
+  background: var(--app-strip-2);
   color: var(--app-soft);
   font-style: italic;
   padding: 16px;
@@ -326,8 +330,8 @@
 
 .daily-progress {
   padding: 18px;
-  background: #f7f0e5;
-  border-top: 1px solid rgba(93, 80, 66, 0.16);
+  background: var(--app-strip);
+  border-top: 1px solid var(--app-border);
 }
 
 .daily-progress-head {
@@ -364,7 +368,7 @@
   justify-content: space-between;
   align-items: flex-end;
   padding: 2px 0;
-  color: #7c7369;
+  color: var(--app-soft);
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -372,10 +376,10 @@
 .daily-progress-chart {
   height: 220px;
   background:
-    linear-gradient(to top, rgba(61, 58, 50, 0.08) 1px, transparent 1px),
-    #fcfaf6;
+    linear-gradient(to top, var(--app-grid-line) 1px, transparent 1px),
+    var(--app-card-soft);
   background-size: 100% 25%;
-  border: 1px solid rgba(93, 80, 66, 0.14);
+  border: 1px solid var(--app-border);
   border-radius: 14px;
   padding: 10px;
 }
@@ -386,7 +390,7 @@
 }
 
 .daily-area-path {
-  fill: rgba(200, 111, 69, 0.2);
+  fill: color-mix(in srgb, var(--app-accent) 20%, transparent);
 }
 
 .daily-line-path {
@@ -400,7 +404,7 @@
 .daily-habit-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(21, 16, 12, 0.45);
+  background: rgba(17, 17, 17, 0.35);
   display: grid;
   place-items: center;
   z-index: 250;
@@ -410,9 +414,9 @@
 .daily-habit-modal {
   width: min(100%, 540px);
   border-radius: 14px;
-  border: 1px solid rgba(93, 80, 66, 0.24);
+  border: 1px solid var(--app-border-strong);
   background: var(--app-panel);
-  box-shadow: 0 20px 34px rgba(17, 13, 10, 0.25);
+  box-shadow: var(--app-shadow);
   padding: 14px;
 }
 
@@ -431,8 +435,8 @@
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  border: 1px solid rgba(93, 80, 66, 0.2);
-  background: #f2e8d9;
+  border: 1px solid var(--app-border);
+  background: var(--app-strip);
   cursor: pointer;
 }
 
@@ -445,24 +449,24 @@
 }
 
 .daily-habit-modal__row {
-  border: 1px solid rgba(93, 80, 66, 0.18);
+  border: 1px solid var(--app-border);
   border-radius: 10px;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  background: #f8f2e8;
+  background: var(--app-strip-2);
 }
 
 .daily-habit-modal__name {
   width: 100%;
-  border: 1px solid rgba(93, 80, 66, 0.2);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
   padding: 9px 10px;
   font-family: inherit;
   font-size: 0.95rem;
-  background: #fffdf9;
+  background: var(--app-panel);
 }
 
 .daily-habit-modal__add {
@@ -474,17 +478,17 @@
 
 .daily-habit-modal__add input {
   border-radius: 10px;
-  border: 1px solid rgba(93, 80, 66, 0.24);
+  border: 1px solid var(--app-border-strong);
   padding: 10px 12px;
   font-family: inherit;
-  background: #fffdf9;
+  background: var(--app-panel);
 }
 
 .daily-habit-modal__add button {
   border-radius: 10px;
   border: none;
   background: var(--app-accent);
-  color: #fff;
+  color: var(--app-ink-invert);
   font-weight: 600;
   cursor: pointer;
 }

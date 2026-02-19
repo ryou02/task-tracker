@@ -17,10 +17,10 @@
 
 .login-card {
   width: min(100%, 430px);
-  border: 1px solid rgba(93, 80, 66, 0.2);
+  border: 1px solid var(--app-border);
   border-radius: 16px;
   background: var(--app-panel);
-  box-shadow: 0 22px 36px rgba(61, 58, 50, 0.12);
+  box-shadow: var(--app-shadow);
   padding: 24px;
 }
 
@@ -30,7 +30,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 700;
-  color: #7a7568;
+  color: var(--app-soft);
 }
 
 .login-title {
@@ -70,20 +70,20 @@
 .login-form label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #5f584d;
+  color: var(--app-soft);
 }
 
 .login-form input {
-  border: 1px solid rgba(93, 80, 66, 0.24);
+  border: 1px solid var(--app-border-strong);
   border-radius: 10px;
   padding: 11px 12px;
-  background: #fffdf9;
+  background: var(--app-panel);
   font-family: inherit;
   color: var(--app-text);
 }
 
 .login-form input:focus {
-  outline: 2px solid rgba(200, 111, 69, 0.35);
+  outline: 2px solid color-mix(in srgb, var(--app-accent) 35%, transparent);
   border-color: var(--app-accent);
 }
 
@@ -91,7 +91,7 @@
   margin-top: 6px;
   border: none;
   background: var(--app-accent);
-  color: #fff;
+  color: var(--app-ink-invert);
 }
 
 .login-submit:hover {
@@ -99,13 +99,13 @@
 }
 
 .login-create {
-  border: 1px solid rgba(93, 80, 66, 0.24);
-  background: #f8f2e8;
-  color: #5f584d;
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-strip);
+  color: var(--app-text);
 }
 
 .login-create:hover {
-  background: #f2e5d4;
+  background: var(--app-strip-2);
 }
 
 .login-feedback {

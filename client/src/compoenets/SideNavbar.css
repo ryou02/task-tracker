@@ -4,7 +4,7 @@
   left: 0;
   width: 240px;
   height: 100vh;
-  border-right: 1px solid rgba(93, 80, 66, 0.16);
+  border-right: 1px solid var(--app-border);
   background: var(--app-panel);
   z-index: 120;
 }
@@ -24,7 +24,7 @@
   letter-spacing: -0.01em;
   text-transform: lowercase;
   padding: 8px 8px 12px;
-  border-bottom: 1px solid rgba(93, 80, 66, 0.14);
+  border-bottom: 1px solid var(--app-border);
 }
 
 .side-navbar__links {
@@ -35,7 +35,7 @@
 .side-navbar__link {
   border-radius: 12px;
   padding: 10px 12px;
-  color: #5f584d;
+  color: var(--app-soft);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -43,23 +43,23 @@
 }
 
 .side-navbar__link:hover {
-  background: #f1e7da;
+  background: var(--app-strip);
   color: var(--app-text);
 }
 
 .side-navbar__link--active {
-  background: rgba(200, 111, 69, 0.16);
-  border: 1px solid rgba(200, 111, 69, 0.42);
-  color: #9d4f2e;
+  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-accent) 42%, transparent);
+  color: var(--app-text);
   font-weight: 600;
 }
 
 .side-navbar__logout {
   margin-top: auto;
-  border: 1px solid rgba(200, 111, 69, 0.35);
+  border: 1px solid color-mix(in srgb, var(--app-accent) 35%, transparent);
   border-radius: 12px;
   padding: 10px 12px;
-  background: #fff7ef;
+  background: color-mix(in srgb, var(--app-accent) 10%, var(--app-panel));
   color: var(--app-accent-deep);
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -67,7 +67,7 @@
 }
 
 .side-navbar__logout:hover {
-  background: #fbe8d6;
+  background: color-mix(in srgb, var(--app-accent) 16%, var(--app-panel));
 }
 
 @media (max-width: 900px) {
@@ -77,7 +77,7 @@
     width: 100%;
     height: auto;
     border-right: 0;
-    border-top: 1px solid rgba(93, 80, 66, 0.16);
+    border-top: 1px solid var(--app-border);
   }
 
   .side-navbar__inner {
