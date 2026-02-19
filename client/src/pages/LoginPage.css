@@ -91,10 +91,11 @@
 .login-submit,
 .login-create {
   width: 100%;
-  border-radius: 10px;
-  padding: 11px 12px;
+  border-radius: 999px;
+  padding: 14px 28px;
   font-family: inherit;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -173,7 +174,7 @@
 
 .login-create {
   border: 1px solid var(--app-border-strong);
-  background: var(--app-strip);
+  background: var(--app-panel);
   color: var(--app-text);
   transition: transform 0.2s ease, background 0.2s ease;
 }

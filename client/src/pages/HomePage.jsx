@@ -1,9 +1,11 @@
 import './HomePage.css'
+import { useNavigate } from 'react-router-dom'
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import EncryptedText from '../compoenets/EncryptedText.jsx'
 
 function HomePage() {
+  const navigate = useNavigate()
   const navItems = [{ name: 'Home', link: '/' }]
   const badges = [
     'Live deadline reminders',
@@ -48,7 +50,11 @@ function HomePage() {
         </p>
 
         <div className="homepage__actions homepage__fade-in-up homepage__fade-in-up--delay-2">
-          <button type="button" className="homepage__button homepage__button--primary">
+          <button
+            type="button"
+            className="homepage__button homepage__button--primary"
+            onClick={() => navigate('/login')}
+          >
             Start Planning
           </button>
         </div>
