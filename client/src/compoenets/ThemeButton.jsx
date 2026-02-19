@@ -4,6 +4,7 @@ const STORAGE_KEY = 'task-tracker-theme'
 const THEMES = [
   { id: 'default', label: 'Default' },
   { id: 'claude', label: 'Claude' },
+  { id: 'vintage-paper', label: 'Vintage Paper' },
 ]
 
 function readTheme() {

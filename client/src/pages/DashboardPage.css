@@ -6,7 +6,6 @@
   background:
     linear-gradient(var(--app-grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px),
-    radial-gradient(circle at 85% 10%, var(--app-glow) 0%, transparent 26%),
     var(--app-bg);
   background-size: 32px 32px, 32px 32px, auto, auto;
   color: var(--app-text);
@@ -75,11 +74,7 @@
 }
 
 .dashboard-card__head {
-  background: linear-gradient(
-    150deg,
-    color-mix(in srgb, var(--app-accent) 82%, transparent) 0%,
-    var(--app-accent-deep) 100%
-  );
+  background: var(--app-accent);
   color: var(--app-ink-invert);
   padding: 10px 10px 12px;
   text-align: center;
@@ -125,7 +120,7 @@
 
 .dashboard-card__tasks-title {
   margin: 0;
-  background: color-mix(in srgb, var(--app-accent) 85%, black 15%);
+  background: var(--app-accent-deep);
   color: var(--app-ink-invert);
   text-align: center;
   font-size: 0.95rem;
@@ -182,7 +177,7 @@
 }
 
 .dashboard-card__footer {
-  background: color-mix(in srgb, var(--app-accent) 78%, black 22%);
+  background: var(--app-accent-deep);
   color: var(--app-ink-invert);
   padding: 8px;
   font-size: 0.78rem;

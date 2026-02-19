@@ -45,7 +45,7 @@ function HomePage() {
         </h1>
 
         <p className="homepage__subtitle homepage__fade-in-up homepage__fade-in-up--delay-1">
-          Organize daily tasks, track deadlines, and keep your workflow clean with a lightweight dashboard built using one of our 43 unique themes.
+          Organize daily tasks, track deadlines, and choose between 5 unique themes.
         </p>
 
         <div className="homepage__actions homepage__fade-in-up homepage__fade-in-up--delay-2">
