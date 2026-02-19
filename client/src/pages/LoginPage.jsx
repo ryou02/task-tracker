@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import { useAuth } from '../context/AuthProvider'
@@ -8,10 +8,11 @@ import './LoginPage.css'
 
 const EMAIL_VERIFY_REDIRECT =
   import.meta.env.VITE_EMAIL_VERIFY_REDIRECT_URL?.trim() ||
-  'https://task-tracker-ryou2.vercel.app/dashboard'
+  'https://task-tracker-ryou2.vercel.app/login?verified=1'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
 
   const [email, setEmail] = useState('')
@@ -20,6 +21,9 @@ function LoginPage() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const redirectPath = '/dashboard'
+  const hasVerifiedParam = new URLSearchParams(location.search).get('verified') === '1'
+  const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''))
+  const otpExpiredFromHash = hashParams.get('error_code') === 'otp_expired'
 
   if (user) {
     return <Navigate to={redirectPath} replace />
@@ -109,6 +113,16 @@ function LoginPage() {
           />
 
           {error ? <p className="login-feedback login-feedback--error">{error}</p> : null}
+          {hasVerifiedParam ? (
+            <p className="login-feedback login-feedback--ok">
+              Email verified. Sign in to continue.
+            </p>
+          ) : null}
+          {otpExpiredFromHash ? (
+            <p className="login-feedback login-feedback--error">
+              This email link was already used or expired. Request a new verification email.
+            </p>
+          ) : null}
           {message ? <p className="login-feedback login-feedback--ok">{message}</p> : null}
 
           <button type="submit" className="login-submit" disabled={loading}>
