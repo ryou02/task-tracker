@@ -10,6 +10,10 @@ function toIsoDate(date) {
   return `${year}-${month}-${day}`
 }
 
+function logKey(habitId, entryDate) {
+  return `${habitId}:${entryDate}`
+}
+
 function getMonday(date) {
   const copy = new Date(date)
   copy.setHours(0, 0, 0, 0)
@@ -74,7 +78,7 @@ function DashboardPage() {
         .order('created_at', { ascending: true }),
       supabase
         .from('daily_habit_logs')
-        .select('habit_id, entry_date, done')
+        .select('id, habit_id, entry_date, done')
         .gte('entry_date', startIso)
         .lte('entry_date', endIso),
       supabase
@@ -105,7 +109,12 @@ function DashboardPage() {
 
     const nextLogs = {}
     ;(logsResponse.data || []).forEach((row) => {
-      nextLogs[`${row.habit_id}:${row.entry_date}`] = row.done
+      nextLogs[logKey(row.habit_id, row.entry_date)] = {
+        id: row.id || null,
+        habit_id: row.habit_id,
+        entry_date: row.entry_date,
+        done: row.done,
+      }
     })
     setLogsByKey(nextLogs)
 
@@ -128,13 +137,70 @@ function DashboardPage() {
     loadDashboardData()
   }, [])
 
+  async function toggleHabitForDay(habitId, entryDate) {
+    const key = logKey(habitId, entryDate)
+    const existing = logsByKey[key]
+
+    if (existing) {
+      const nextDone = !existing.done
+      setLogsByKey((previous) => ({
+        ...previous,
+        [key]: { ...previous[key], done: nextDone },
+      }))
+
+      const { error: updateError } = await supabase
+        .from('daily_habit_logs')
+        .update({ done: nextDone })
+        .match(
+          existing.id
+            ? { id: existing.id }
+            : { habit_id: habitId, entry_date: entryDate },
+        )
+
+      if (updateError) {
+        setError(updateError.message)
+        setLogsByKey((previous) => ({
+          ...previous,
+          [key]: { ...previous[key], done: existing.done },
+        }))
+      }
+      return
+    }
+
+    setLogsByKey((previous) => ({
+      ...previous,
+      [key]: { id: null, habit_id: habitId, entry_date: entryDate, done: true },
+    }))
+
+    const { error: insertError } = await supabase
+      .from('daily_habit_logs')
+      .insert({
+        habit_id: habitId,
+        entry_date: entryDate,
+        done: true,
+      })
+
+    if (insertError) {
+      setError(insertError.message)
+      setLogsByKey((previous) => {
+        const next = { ...previous }
+        delete next[key]
+        return next
+      })
+      return
+    }
+
+  }
+
   const dayCards = useMemo(
     () =>
       weekDates.map((date) => {
         const entryDate = toIsoDate(date)
         const tasks = habits.map((habit) => ({
+          habitId: habit.id,
+          entryDate,
           name: habit.name,
-          done: Boolean(logsByKey[`${habit.id}:${entryDate}`]),
+          done: Boolean(logsByKey[logKey(habit.id, entryDate)]?.done),
         }))
         const completed = tasks.filter((task) => task.done).length
         const progress = habits.length === 0 ? 0 : Math.round((completed / habits.length) * 100)
@@ -194,10 +260,16 @@ function DashboardPage() {
             ) : (
               <ul className="dashboard-card__tasks">
                 {card.tasks.map((task) => (
-                  <li key={task.name}>
-                    <span className={`dashboard-check ${task.done ? 'dashboard-check--done' : ''}`}>
+                  <li key={`${card.day}-${task.habitId}`}>
+                    <button
+                      type="button"
+                      className={`dashboard-check ${task.done ? 'dashboard-check--done' : ''}`}
+                      aria-label={`Toggle ${task.name} for ${card.day}`}
+                      aria-pressed={task.done}
+                      onClick={() => toggleHabitForDay(task.habitId, task.entryDate)}
+                    >
                       {task.done ? '✓' : ''}
-                    </span>
+                    </button>
                     <span className={task.done ? 'dashboard-task--done' : ''}>{task.name}</span>
                   </li>
                 ))}
