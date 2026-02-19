@@ -13,21 +13,22 @@ function toIsoDate(date) {
   return `${year}-${month}-${day}`
 }
 
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1)
+function startOfMonth(year, monthIndex) {
+  return new Date(year, monthIndex, 1)
 }
 
-function endOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0)
+function endOfMonth(year, monthIndex) {
+  return new Date(year, monthIndex + 1, 0)
 }
 
-function shiftMonth(date, direction) {
-  return new Date(date.getFullYear(), date.getMonth() + direction, 1)
+function shiftMonthIndex(monthIndex, direction) {
+  if (direction > 0) return monthIndex === 11 ? 0 : monthIndex + 1
+  return monthIndex === 0 ? 11 : monthIndex - 1
 }
 
-function buildCalendarDays(monthDate) {
-  const first = startOfMonth(monthDate)
-  const last = endOfMonth(monthDate)
+function buildCalendarDays(year, monthIndex) {
+  const first = startOfMonth(year, monthIndex)
+  const last = endOfMonth(year, monthIndex)
   const days = []
 
   for (let idx = 0; idx < first.getDay(); idx += 1) {
@@ -35,7 +36,7 @@ function buildCalendarDays(monthDate) {
   }
 
   for (let day = 1; day <= last.getDate(); day += 1) {
-    days.push(new Date(monthDate.getFullYear(), monthDate.getMonth(), day))
+    days.push(new Date(year, monthIndex, day))
   }
 
   const trailingSlots = (7 - (days.length % 7)) % 7
@@ -50,15 +51,14 @@ function formatHeading(date) {
   return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 }
 
-function formatSelectedDate(dateString) {
-  if (!dateString) return ''
-  const date = new Date(`${dateString}T00:00:00`)
-  return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-}
-
 function CalenderPage() {
-  const [visibleMonth, setVisibleMonth] = useState(startOfMonth(new Date()))
-  const [selectedDate, setSelectedDate] = useState(toIsoDate(new Date()))
+  const currentYear = new Date().getFullYear()
+  const today = new Date()
+  const initialMonth = today.getMonth()
+  const initialDate = toIsoDate(today)
+
+  const [visibleMonthIndex, setVisibleMonthIndex] = useState(initialMonth)
+  const [selectedDate, setSelectedDate] = useState(initialDate)
   const [deadlinesByDate, setDeadlinesByDate] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -68,8 +68,8 @@ function CalenderPage() {
       setLoading(true)
       setError('')
 
-      const monthStart = toIsoDate(startOfMonth(visibleMonth))
-      const monthEnd = toIsoDate(endOfMonth(visibleMonth))
+      const monthStart = toIsoDate(startOfMonth(currentYear, visibleMonthIndex))
+      const monthEnd = toIsoDate(endOfMonth(currentYear, visibleMonthIndex))
 
       const { data, error: monthError } = await supabase
         .from('deadlines')
@@ -103,14 +103,16 @@ function CalenderPage() {
     }
 
     loadMonth()
-  }, [visibleMonth])
+  }, [currentYear, visibleMonthIndex])
 
-  const days = useMemo(() => buildCalendarDays(visibleMonth), [visibleMonth])
-  const selectedTasks = deadlinesByDate[selectedDate] || []
+  const days = useMemo(
+    () => buildCalendarDays(currentYear, visibleMonthIndex),
+    [currentYear, visibleMonthIndex],
+  )
   const todayIso = toIsoDate(new Date())
 
   function goToMonth(direction) {
-    setVisibleMonth((previous) => shiftMonth(previous, direction))
+    setVisibleMonthIndex((previous) => shiftMonthIndex(previous, direction))
   }
 
   return (
@@ -145,7 +147,7 @@ function CalenderPage() {
               <button type="button" className="calender__month-btn" onClick={() => goToMonth(-1)}>
                 Prev
               </button>
-              <h2>{formatHeading(visibleMonth)}</h2>
+              <h2>{formatHeading(new Date(currentYear, visibleMonthIndex, 1))}</h2>
               <button type="button" className="calender__month-btn" onClick={() => goToMonth(1)}>
                 Next
               </button>
@@ -164,7 +166,7 @@ function CalenderPage() {
                 }
 
                 const iso = toIsoDate(date)
-                const taskCount = deadlinesByDate[iso]?.length || 0
+                const dayTasks = deadlinesByDate[iso] || []
                 const isSelected = selectedDate === iso
                 const isToday = todayIso === iso
 
@@ -179,38 +181,28 @@ function CalenderPage() {
                     <span className={`calender__day ${isToday ? 'calender__day--today' : ''}`}>
                       {date.getDate()}
                     </span>
-                    <span className="calender__count">
-                      {taskCount > 0 ? `${taskCount} due` : '\u00a0'}
-                    </span>
+                    <div className="calender__cell-tasks">
+                      {dayTasks.slice(0, 2).map((task) => (
+                        <article key={task.id} className="calender__cell-task-card">
+                          <p className="calender__cell-task-name">{task.name}</p>
+                          <span
+                            className="calender__cell-task-subject"
+                            style={{ background: task.colorBg, color: task.colorText }}
+                          >
+                            {task.subject}
+                          </span>
+                        </article>
+                      ))}
+                      {dayTasks.length > 2 ? (
+                        <span className="calender__cell-more">+{dayTasks.length - 2} more</span>
+                      ) : null}
+                    </div>
                   </button>
                 )
               })}
             </div>
 
             {loading ? <p className="calender__loading">Loading deadlines...</p> : null}
-          </section>
-
-          <section className="calender__tasks-card" aria-label="Tasks due on selected day">
-            <h3>{formatSelectedDate(selectedDate)}</h3>
-            {loading ? (
-              <p className="calender__muted">Please wait...</p>
-            ) : selectedTasks.length === 0 ? (
-              <p className="calender__muted">No tasks due on this day.</p>
-            ) : (
-              <ul className="calender__task-list">
-                {selectedTasks.map((task) => (
-                  <li key={task.id}>
-                    <span className="calender__task-name">{task.name}</span>
-                    <span
-                      className="calender__subject"
-                      style={{ background: task.colorBg, color: task.colorText }}
-                    >
-                      {task.subject}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
           </section>
         </section>
       </section>

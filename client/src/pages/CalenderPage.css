@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Ephesis&display=swap');
+
 .calender-page {
   min-height: 100vh;
   padding: 34px 24px 40px;
@@ -42,6 +44,8 @@
 .calender__title-accent {
   margin-left: 0.25ch;
   color: var(--app-accent);
+  font-family: 'Ephesis', cursive;
+  font-size: 1.12em;
 }
 
 .calender__title-generate {
@@ -64,13 +68,10 @@
 
 .calender__layout {
   margin-top: 20px;
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-  gap: 16px;
+  display: block;
 }
 
-.calender__grid-card,
-.calender__tasks-card {
+.calender__grid-card {
   border: 1px solid var(--app-border);
   border-radius: 16px;
   background: var(--app-panel);
@@ -79,16 +80,6 @@
 
 .calender__grid-card {
   padding: 14px;
-}
-
-.calender__tasks-card {
-  padding: 16px;
-  height: fit-content;
-}
-
-.calender__tasks-card h3 {
-  margin: 0;
-  font-size: 1.35rem;
 }
 
 .calender__toolbar {
@@ -143,7 +134,7 @@
   border: 1px solid var(--app-border);
   background: var(--app-card-soft);
   border-radius: 12px;
-  min-height: 76px;
+  min-height: 168px;
   padding: 8px;
   text-align: left;
   cursor: pointer;
@@ -151,7 +142,8 @@
   font-family: inherit;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
 .calender__cell:hover {
@@ -177,16 +169,48 @@
 
 .calender__day {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .calender__day--today {
   color: var(--app-accent-deep);
 }
 
-.calender__count {
+.calender__cell-tasks {
+  display: grid;
+  gap: 8px;
+}
+
+.calender__cell-task-card {
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--app-panel) 92%, white);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--app-text) 10%, transparent);
+  padding: 8px 8px 7px;
+}
+
+.calender__cell-task-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.calender__cell-task-subject {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+.calender__cell-more {
   color: var(--app-soft);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 .calender__loading {
@@ -195,56 +219,12 @@
   font-size: 0.88rem;
 }
 
-.calender__muted {
-  margin: 10px 0 0;
-  color: var(--app-soft);
-}
-
-.calender__task-list {
-  list-style: none;
-  padding: 0;
-  margin: 14px 0 0;
-  display: grid;
-  gap: 8px;
-}
-
-.calender__task-list li {
-  border: 1px solid var(--app-border);
-  background: var(--app-card-soft);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.calender__task-name {
-  font-weight: 600;
-}
-
-.calender__subject {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 3px 10px;
-  font-size: 0.82rem;
-  text-transform: lowercase;
-}
-
-@media (max-width: 1100px) {
-  .calender__layout {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 700px) {
   .calender-page {
     padding: 18px 12px 98px;
   }
 
-  .calender__grid-card,
-  .calender__tasks-card {
+  .calender__grid-card {
     border-radius: 12px;
     padding: 12px;
   }
@@ -259,12 +239,16 @@
   }
 
   .calender__cell {
-    min-height: 66px;
+    min-height: 132px;
     padding: 6px;
   }
 
-  .calender__count {
-    font-size: 0.72rem;
+  .calender__cell-task-name {
+    font-size: 0.82rem;
+  }
+
+  .calender__cell-task-subject {
+    font-size: 0.7rem;
   }
 }
 
