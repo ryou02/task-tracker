@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import trashIcon from '../assets/trash.png'
+import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import { supabase } from '../lib/supabase'
 import './DeadlinesPage.css'
 
@@ -365,7 +366,16 @@ function DeadlinesPage() {
           <p className="deadlines__eyebrow">Planner</p>
           <h1 className="deadlines__title">
             Deadlines
-            <span className="deadlines__title-squiggle"> board</span>
+            <span className="deadlines__title-squiggle">
+              {' '}
+              <TextGenerateEffect
+                words="board"
+                className="deadlines__title-generate"
+                duration={0.55}
+                stagger={0.2}
+                startDelay={0.25}
+              />
+            </span>
           </h1>
           <p className="deadlines__subtitle">
             Track each task by subject, see days left at a glance, and keep due

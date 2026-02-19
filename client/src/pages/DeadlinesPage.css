@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Ephesis&display=swap');
 
 .deadlines-page {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
   background:
     linear-gradient(var(--app-grid-line) 1px, transparent 1px),
@@ -13,13 +15,36 @@
   padding: 92px 22px 40px;
 }
 
+.deadlines-page::before {
+  content: '';
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -120px;
+  top: -110px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--app-accent) 16%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: deadlinesGlowShift 12s ease-in-out infinite alternate;
+}
+
 .deadlines {
+  position: relative;
+  z-index: 1;
   max-width: 1180px;
   margin: 0 auto;
 }
 
 .deadlines__header {
   margin-bottom: 26px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: deadlinesFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.08s;
 }
 
 .deadlines__eyebrow {
@@ -45,6 +70,11 @@
   margin-left: 0.25ch;
 }
 
+.deadlines__title-generate {
+  display: inline-block;
+  line-height: 1;
+}
+
 .deadlines__subtitle {
   margin: 16px 0 0;
   max-width: 760px;
@@ -53,11 +83,17 @@
 }
 
 .deadlines__composer {
+  position: relative;
+  z-index: 120;
   display: grid;
   grid-template-columns: 180px 1fr 220px 130px;
   gap: 10px;
   margin-bottom: 16px;
   align-items: start;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: deadlinesFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.18s;
 }
 
 .deadlines__composer input,
@@ -90,10 +126,15 @@
   margin: 0 0 12px;
   color: #9f2d20;
   font-weight: 600;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: deadlinesFadeUp 0.5s ease forwards;
+  animation-delay: 0.26s;
 }
 
 .deadlines__subject-picker {
   position: relative;
+  z-index: 125;
 }
 
 .deadlines__subject-trigger {
@@ -130,7 +171,7 @@
   border-radius: 12px;
   box-shadow: var(--app-shadow);
   padding: 10px;
-  z-index: 30;
+  z-index: 300;
 }
 
 .deadlines__subject-list {
@@ -182,6 +223,10 @@
   overflow: visible;
   background: var(--app-panel);
   box-shadow: var(--app-shadow);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: deadlinesFadeUp 0.68s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.3s;
 }
 
 .deadlines__table-title {
@@ -224,6 +269,8 @@
 
 .deadlines__table tbody tr {
   position: relative;
+  animation: deadlinesRowIn 0.45s ease both;
+  animation-delay: calc(var(--row-index, 0) * 0.02s + 0.36s);
 }
 
 .deadlines__editable-cell {
@@ -546,5 +593,43 @@
 
   .deadlines__modal-actions {
     flex-direction: column;
+  }
+}
+
+@keyframes deadlinesFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes deadlinesGlowShift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-24px, 18px, 0) scale(1.08);
+  }
+}
+
+@keyframes deadlinesRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deadlines-page * {
+    animation: none !important;
+    transition: none !important;
   }
 }
