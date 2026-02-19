@@ -285,6 +285,15 @@
   cursor: pointer;
 }
 
+.deadlines__assignment-cell {
+  cursor: text;
+  transition: background-color 150ms ease;
+}
+
+.deadlines__assignment-cell:hover {
+  background: color-mix(in srgb, var(--app-accent) 8%, transparent);
+}
+
 .deadlines__subject-pill {
   display: inline-flex;
   align-items: center;

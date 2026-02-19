@@ -223,18 +223,6 @@ function DeadlinesPage() {
     setSubjectMenuOpen(false)
   }
 
-  function nextSubjectName() {
-    const base = 'new subject'
-    const taken = new Set(subjects.map((subject) => subject.name.toLowerCase()))
-    if (!taken.has(base)) return base
-
-    let count = 2
-    while (taken.has(`${base} ${count}`)) {
-      count += 1
-    }
-    return `${base} ${count}`
-  }
-
   function updateSubjectDraftLocal(draftId, patch) {
     setSubjectDrafts((previous) =>
       previous.map((draft) => {
@@ -251,44 +239,15 @@ function DeadlinesPage() {
 
   async function addSubjectDraft() {
     const nextColor = defaultPalette[subjects.length % defaultPalette.length]
-    const name = nextSubjectName()
-
-    const { error } = await supabase.from('subjects').insert({
-      name,
-      color_bg: nextColor,
-      color_text: getContrast(nextColor),
-    })
-
-    if (error) {
-      setSubjectError(error.message)
-      return
-    }
-
-    await loadSubjects()
     setSubjectDrafts((previous) => [
       ...previous,
       {
         id: `local-${Date.now()}`,
-        name,
+        name: '',
         color_bg: nextColor,
         color_text: getContrast(nextColor),
       },
     ])
-
-    // Re-sync drafts to true DB values after insert.
-    const { data } = await supabase
-      .from('subjects')
-      .select('id, name, color_bg, color_text, created_at')
-      .order('created_at', { ascending: true })
-
-    setSubjectDrafts(
-      (data || []).map((subject) => ({
-        id: subject.id,
-        name: subject.name,
-        color_bg: subject.color_bg,
-        color_text: subject.color_text,
-      })),
-    )
   }
 
   async function persistSubjectDraft(draftId, patch) {
@@ -298,6 +257,36 @@ function DeadlinesPage() {
     const next = { ...current, ...patch }
     if (!next.name.trim()) {
       setSubjectError('Subject name cannot be empty.')
+      return
+    }
+
+    if (String(draftId).startsWith('local-')) {
+      const { error } = await supabase.from('subjects').insert({
+        name: next.name.trim(),
+        color_bg: next.color_bg,
+        color_text: next.color_text,
+      })
+
+      if (error) {
+        setSubjectError(error.message)
+        return
+      }
+
+      const { data } = await supabase
+        .from('subjects')
+        .select('id, name, color_bg, color_text, created_at')
+        .order('created_at', { ascending: true })
+
+      await loadSubjects()
+      await loadDeadlines()
+      setSubjectDrafts(
+        (data || []).map((subject) => ({
+          id: subject.id,
+          name: subject.name,
+          color_bg: subject.color_bg,
+          color_text: subject.color_text,
+        })),
+      )
       return
     }
 
@@ -319,6 +308,11 @@ function DeadlinesPage() {
   }
 
   async function removeSubjectDraft(draft) {
+    if (String(draft.id).startsWith('local-')) {
+      setSubjectDrafts((previous) => previous.filter((row) => row.id !== draft.id))
+      return
+    }
+
     const { count, error } = await supabase
       .from('deadlines')
       .select('id', { count: 'exact', head: true })
@@ -597,12 +591,17 @@ function DeadlinesPage() {
                       ) : null}
                     </td>
                     <td
-                      className="deadlines__editable-cell"
-                      onClick={(event) => {
-                        event.stopPropagation()
+                      className="deadlines__editable-cell deadlines__assignment-cell"
+                      onMouseEnter={() => {
                         setSubjectMenuRowId(null)
+                        if (editingCell?.id === item.id && editingCell?.field === 'assignment_name') return
                         setAssignmentDraft(item.assignment_name)
                         setEditingCell({ id: item.id, field: 'assignment_name' })
+                      }}
+                      onMouseLeave={() => {
+                        if (editingCell?.id === item.id && editingCell?.field === 'assignment_name') {
+                          setEditingCell(null)
+                        }
                       }}
                     >
                       {editingCell?.id === item.id && editingCell?.field === 'assignment_name' ? (
@@ -618,6 +617,10 @@ function DeadlinesPage() {
                               setEditingCell(null)
                               return
                             }
+                            if (trimmed === item.assignment_name) {
+                              setEditingCell(null)
+                              return
+                            }
                             const ok = await patchDeadline(item.id, { assignment_name: trimmed })
                             if (ok) setEditingCell(null)
                           }}
@@ -625,6 +628,10 @@ function DeadlinesPage() {
                             if (event.key === 'Enter') {
                               const trimmed = assignmentDraft.trim()
                               if (!trimmed) return
+                              if (trimmed === item.assignment_name) {
+                                setEditingCell(null)
+                                return
+                              }
                               const ok = await patchDeadline(item.id, { assignment_name: trimmed })
                               if (ok) setEditingCell(null)
                             }
