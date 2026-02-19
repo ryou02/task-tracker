@@ -1,9 +1,7 @@
 # Preview Links
 
-- [Home](http://localhost:5173/)
-- [Login](http://localhost:5173/login)
-- [Dashboard](http://localhost:5173/dashboard)
-- [Daily](http://localhost:5173/daily)
-- [Deadlines](http://localhost:5173/deadlines)
-- [Calender](http://localhost:5173/calender)
-- [Pomodoro](http://localhost:5173/pomodoro)
+
+- [prev1](./preview/prev1.png)
+- [prev2](./preview/prev2.png)
+- [prev3](./preview/prev3.png)
+- [prev4](./preview/prev4.png)
