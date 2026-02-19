@@ -2,7 +2,6 @@ import './HomePage.css'
 import { FloatingNav } from '../compoenets/FloatingNav.jsx'
 import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import EncryptedText from '../compoenets/EncryptedText.jsx'
-import ThemeButton from '../compoenets/ThemeButton.jsx'
 
 function HomePage() {
   const navItems = [{ name: 'Home', link: '/' }]
@@ -52,7 +51,6 @@ function HomePage() {
           <button type="button" className="homepage__button homepage__button--primary">
             Start Planning
           </button>
-          <ThemeButton className="homepage__button homepage__button--primary homepage__theme-button" />
         </div>
 
         <div className="homepage__badges homepage__fade-in-up homepage__fade-in-up--delay-3">

@@ -54,20 +54,205 @@
   font-weight: 600;
 }
 
-.side-navbar__logout {
+.side-navbar__settings-wrap {
   margin-top: auto;
+}
+
+.side-navbar__settings-btn {
+  width: 100%;
   border: 1px solid color-mix(in srgb, var(--app-accent) 35%, transparent);
   border-radius: 12px;
   padding: 10px 12px;
   background: color-mix(in srgb, var(--app-accent) 10%, var(--app-panel));
   color: var(--app-accent-deep);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.side-navbar__settings-btn:hover {
+  background: color-mix(in srgb, var(--app-accent) 16%, var(--app-panel));
+}
+
+.side-navbar__settings-btn img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.side-navbar__settings-user {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.side-navbar__settings-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 40%, transparent);
+  background: var(--app-strip);
+  color: var(--app-text);
+  display: grid;
+  place-items: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.side-navbar__settings-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.side-navbar__settings-email {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--app-text);
+}
+
+.side-navbar__settings-hud {
+  display: none;
+}
+
+.side-navbar__hud-theme {
+  width: 100%;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 10px;
+  background: var(--app-strip);
+  color: var(--app-text);
+  padding: 11px 12px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.92rem;
   cursor: pointer;
 }
 
-.side-navbar__logout:hover {
+.side-navbar__hud-theme:hover {
+  background: var(--app-strip-2);
+}
+
+.side-navbar__hud-logout {
+  border: 1px solid color-mix(in srgb, var(--app-accent) 32%, transparent);
+  border-radius: 10px;
+  padding: 11px 12px;
+  background: color-mix(in srgb, var(--app-accent) 10%, var(--app-panel));
+  color: var(--app-accent-deep);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.side-navbar__hud-logout:hover {
   background: color-mix(in srgb, var(--app-accent) 16%, var(--app-panel));
+}
+
+.side-navbar .theme-dropdown {
+  position: relative;
+}
+
+.side-navbar .theme-dropdown__caret {
+  margin-left: 6px;
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.side-navbar .theme-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  border-radius: 12px;
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow);
+  padding: 6px;
+  z-index: 170;
+}
+
+.side-navbar .theme-dropdown__option {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 9px;
+  text-align: left;
+  background: transparent;
+  color: var(--app-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.side-navbar .theme-dropdown__option:hover {
+  background: var(--app-strip);
+}
+
+.side-navbar .theme-dropdown__option--active {
+  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
+}
+
+.side-navbar__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 12, 12, 0.35);
+  display: grid;
+  place-items: center;
+  z-index: 400;
+  padding: 16px;
+}
+
+.side-navbar__settings-modal {
+  width: min(100%, 560px);
+  border: 1px solid var(--app-border-strong);
+  border-radius: 16px;
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow);
+  padding: 18px;
+}
+
+.side-navbar__modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--app-border);
+  padding-bottom: 14px;
+}
+
+.side-navbar__modal-label {
+  margin: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-soft);
+}
+
+.side-navbar__modal-email {
+  margin: 6px 0 0;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--app-text);
+  word-break: break-word;
+}
+
+.side-navbar__modal-actions {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
 }
 
 @media (max-width: 900px) {
@@ -99,7 +284,11 @@
     font-size: 0.84rem;
   }
 
-  .side-navbar__logout {
+  .side-navbar__settings-wrap {
     margin-top: 0;
+  }
+
+  .side-navbar__settings-modal {
+    width: min(100%, 440px);
   }
 }

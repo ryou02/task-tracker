@@ -8,7 +8,7 @@ import { AuthProvider } from './context/AuthProvider.jsx'
 
 const savedTheme = localStorage.getItem('task-tracker-theme')
 const validThemes = new Set(['default', 'claude', 'vintage-paper', 'perpetuity'])
-const initialTheme = validThemes.has(savedTheme) ? savedTheme : 'default'
+const initialTheme = validThemes.has(savedTheme) ? savedTheme : 'claude'
 document.documentElement.classList.remove('dark')
 document.documentElement.dataset.theme = initialTheme
 

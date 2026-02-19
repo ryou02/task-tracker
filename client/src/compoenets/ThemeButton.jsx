@@ -9,9 +9,9 @@ const THEMES = [
 ]
 
 function readTheme() {
-  if (typeof window === 'undefined') return 'default'
+  if (typeof window === 'undefined') return 'claude'
   const saved = localStorage.getItem(STORAGE_KEY)
-  return THEMES.some((theme) => theme.id === saved) ? saved : 'default'
+  return THEMES.some((theme) => theme.id === saved) ? saved : 'claude'
 }
 
 function applyTheme(theme) {
@@ -38,7 +38,7 @@ function ThemeButton({ className = '' }) {
       }
     }
     const onThemeUpdated = (event) => {
-      const next = THEMES.some((item) => item.id === event.detail) ? event.detail : 'default'
+      const next = THEMES.some((item) => item.id === event.detail) ? event.detail : 'claude'
       setTheme(next)
     }
     const onDocumentClick = (event) => {
