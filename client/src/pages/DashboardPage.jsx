@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import { supabase } from '../lib/supabase'
 import './DashboardPage.css'
 
@@ -223,7 +224,16 @@ function DashboardPage() {
         <p className="dashboard-header__eyebrow">Overview</p>
         <h1 className="dashboard-header__title">
           Weekly
-          <span className="dashboard-header__accent"> dashboard</span>
+          <span className="dashboard-header__accent">
+            {' '}
+            <TextGenerateEffect
+              words="dashboard"
+              className="dashboard-header__generate"
+              duration={0.55}
+              stagger={0.2}
+              startDelay={0.5}
+            />
+          </span>
         </h1>
         <p className="dashboard-header__subtitle">
           Daily cards now come directly from your habits tracker for the current week.

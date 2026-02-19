@@ -46,6 +46,11 @@
   font-weight: 600;
 }
 
+.daily-intro__generate {
+  display: inline-block;
+  line-height: 1;
+}
+
 .daily-intro__subtitle {
   margin: 14px 0 0;
   max-width: 760px;

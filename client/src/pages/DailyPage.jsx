@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+
+import TextGenerateEffect from '../compoenets/TextGenerateEffect.jsx'
 import './DailyPage.css'
 import trashIcon from '../assets/trash.png'
 import { supabase } from '../lib/supabase'
@@ -395,7 +397,16 @@ function DailyPage() {
         <p className="daily-intro__eyebrow">Daily Planner</p>
         <h1 className="daily-intro__title">
           Daily
-          <span className="daily-intro__accent"> tracker</span>
+          <span className="daily-intro__accent">
+            {' '}
+            <TextGenerateEffect
+              words="tracker"
+              className="daily-intro__generate"
+              duration={0.55}
+              stagger={0.2}
+              startDelay={0.5}
+            />
+          </span>
         </h1>
         <p className="daily-intro__subtitle">
           Mark habits each day, watch weekly consistency, and use the progress

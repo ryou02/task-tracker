@@ -45,6 +45,11 @@
   font-weight: 600;
 }
 
+.dashboard-header__generate {
+  display: inline-block;
+  line-height: 1;
+}
+
 .dashboard-header__subtitle {
   margin: 14px 0 0;
   max-width: 780px;
