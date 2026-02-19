@@ -1,0 +1,280 @@
+.calender-page {
+  min-height: 100vh;
+  padding: 34px 24px 40px;
+  background:
+    linear-gradient(var(--app-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px),
+    radial-gradient(circle at 82% 12%, var(--app-glow) 0%, transparent 28%),
+    var(--app-bg);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  color: var(--app-text);
+  font-family: var(--font-sans);
+}
+
+.calender {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.calender__header {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: calenderFadeUp 0.62s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: 0.08s;
+}
+
+.calender__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--app-soft);
+}
+
+.calender__title {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 5.2vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.calender__title-accent {
+  margin-left: 0.25ch;
+  color: var(--app-accent);
+}
+
+.calender__title-generate {
+  display: inline-block;
+  line-height: 1;
+}
+
+.calender__subtitle {
+  margin: 14px 0 0;
+  max-width: 760px;
+  color: var(--app-soft);
+  font-size: 1rem;
+}
+
+.calender__error {
+  margin: 14px 0 0;
+  color: #9f2d20;
+  font-size: 0.92rem;
+}
+
+.calender__layout {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+
+.calender__grid-card,
+.calender__tasks-card {
+  border: 1px solid var(--app-border);
+  border-radius: 16px;
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow);
+}
+
+.calender__grid-card {
+  padding: 14px;
+}
+
+.calender__tasks-card {
+  padding: 16px;
+  height: fit-content;
+}
+
+.calender__tasks-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.calender__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.calender__toolbar h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.calender__month-btn {
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: var(--app-strip);
+  color: var(--app-text);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.calender__month-btn:hover {
+  background: var(--app-strip-2);
+}
+
+.calender__weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.calender__weekday-row span {
+  text-align: center;
+  color: var(--app-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.calender__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calender__cell {
+  border: 1px solid var(--app-border);
+  background: var(--app-card-soft);
+  border-radius: 12px;
+  min-height: 76px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--app-text);
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.calender__cell:hover {
+  border-color: var(--app-border-strong);
+  background: var(--app-strip-2);
+}
+
+.calender__cell--selected {
+  border-color: color-mix(in srgb, var(--app-accent) 52%, transparent);
+  background: color-mix(in srgb, var(--app-accent) 14%, var(--app-panel));
+}
+
+.calender__cell--empty {
+  background: transparent;
+  border-style: dashed;
+  cursor: default;
+}
+
+.calender__cell--empty:hover {
+  border-color: var(--app-border);
+  background: transparent;
+}
+
+.calender__day {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.calender__day--today {
+  color: var(--app-accent-deep);
+}
+
+.calender__count {
+  color: var(--app-soft);
+  font-size: 0.76rem;
+}
+
+.calender__loading {
+  margin: 12px 2px 2px;
+  color: var(--app-soft);
+  font-size: 0.88rem;
+}
+
+.calender__muted {
+  margin: 10px 0 0;
+  color: var(--app-soft);
+}
+
+.calender__task-list {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.calender__task-list li {
+  border: 1px solid var(--app-border);
+  background: var(--app-card-soft);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.calender__task-name {
+  font-weight: 600;
+}
+
+.calender__subject {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  text-transform: lowercase;
+}
+
+@media (max-width: 1100px) {
+  .calender__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .calender-page {
+    padding: 18px 12px 98px;
+  }
+
+  .calender__grid-card,
+  .calender__tasks-card {
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .calender__toolbar h2 {
+    font-size: 1rem;
+  }
+
+  .calender__month-btn {
+    padding: 7px 10px;
+    font-size: 0.85rem;
+  }
+
+  .calender__cell {
+    min-height: 66px;
+    padding: 6px;
+  }
+
+  .calender__count {
+    font-size: 0.72rem;
+  }
+}
+
+@keyframes calenderFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

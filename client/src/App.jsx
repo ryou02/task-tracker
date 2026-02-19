@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import DailyPage from './pages/DailyPage.jsx'
+import CalenderPage from './pages/CalenderPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import DeadlinesPage from './pages/DeadlinesPage.jsx'
 import HomePage from './pages/HomePage.jsx'
@@ -17,6 +18,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/deadlines" element={<DeadlinesPage />} />
           <Route path="/daily" element={<DailyPage />} />
+          <Route path="/calender" element={<CalenderPage />} />
+          <Route path="/calendar" element={<Navigate to="/calender" replace />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

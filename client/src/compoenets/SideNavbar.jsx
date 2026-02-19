@@ -38,6 +38,9 @@ function SideNavbar() {
           <NavLink to="/deadlines" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
             Deadlines
           </NavLink>
+          <NavLink to="/calender" className={({ isActive }) => `side-navbar__link${isActive ? ' side-navbar__link--active' : ''}`}>
+            Calender
+          </NavLink>
         </nav>
 
         <div className="side-navbar__settings-wrap">
