@@ -190,7 +190,7 @@ function CalenderPage() {
                       {date.getDate()}
                     </span>
                     <div className="calender__cell-tasks">
-                      {dayTasks.slice(0, 2).map((task) => (
+                      {dayTasks.map((task) => (
                         <article key={task.id} className="calender__cell-task-card">
                           <p className="calender__cell-task-name">{task.name}</p>
                           <span
@@ -201,9 +201,6 @@ function CalenderPage() {
                           </span>
                         </article>
                       ))}
-                      {dayTasks.length > 2 ? (
-                        <span className="calender__cell-more">+{dayTasks.length - 2} more</span>
-                      ) : null}
                     </div>
                   </button>
                 )

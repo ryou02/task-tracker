@@ -6,6 +6,10 @@ import { useAuth } from '../context/AuthProvider'
 import { supabase } from '../lib/supabase'
 import './LoginPage.css'
 
+const EMAIL_VERIFY_REDIRECT =
+  import.meta.env.VITE_EMAIL_VERIFY_REDIRECT_URL?.trim() ||
+  'https://task-tracker-ryou2.vercel.app/dashboard'
+
 function LoginPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -54,6 +58,9 @@ function LoginPage() {
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: EMAIL_VERIFY_REDIRECT,
+      },
     })
 
     if (signUpError) {

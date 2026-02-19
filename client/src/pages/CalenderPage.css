@@ -207,31 +207,31 @@
 
 .calender__cell-tasks {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .calender__cell-task-card {
   border: 1px solid var(--app-border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--app-panel) 92%, white);
   box-shadow: 0 1px 2px color-mix(in srgb, var(--app-text) 10%, transparent);
-  padding: 6px 6px 5px;
+  padding: 5px 6px 4px;
 }
 
 .calender__cell-task-name {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .calender__cell-task-subject {
   display: inline-flex;
   align-items: center;
-  margin-top: 6px;
+  margin-top: 4px;
   border-radius: 7px;
-  padding: 2px 7px;
-  font-size: 0.68rem;
+  padding: 1px 6px;
+  font-size: 0.64rem;
   font-weight: 600;
   text-transform: lowercase;
 }
