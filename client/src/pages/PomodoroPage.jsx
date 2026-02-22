@@ -32,51 +32,73 @@ function PomodoroPage() {
   const [mode, setMode] = useState(MODES.focus)
   const [secondsLeft, setSecondsLeft] = useState(25 * 60)
   const [running, setRunning] = useState(false)
+  const [endTimeMs, setEndTimeMs] = useState(null)
   const [completedFocusSessions, setCompletedFocusSessions] = useState(0)
 
   useEffect(() => {
     setSecondsLeft(durations[mode])
+    setEndTimeMs(null)
   }, [durations, mode])
 
   useEffect(() => {
-    if (!running) return undefined
+    if (!running || endTimeMs === null) return undefined
+
+    let finished = false
 
     const intervalId = window.setInterval(() => {
-      setSecondsLeft((previous) => (previous > 0 ? previous - 1 : 0))
-    }, 1000)
+      const remaining = Math.max(0, Math.ceil((endTimeMs - Date.now()) / 1000))
+      setSecondsLeft((previous) => (previous === remaining ? previous : remaining))
+
+      if (remaining > 0 || finished) return
+      finished = true
+
+      setRunning(false)
+      setEndTimeMs(null)
+
+      if (mode === MODES.focus) {
+        setCompletedFocusSessions((previous) => {
+          const next = previous + 1
+          setMode(next % 4 === 0 ? MODES.long : MODES.short)
+          return next
+        })
+      } else {
+        setMode(MODES.focus)
+      }
+    }, 250)
 
     return () => window.clearInterval(intervalId)
-  }, [running])
-
-  useEffect(() => {
-    if (!running || secondsLeft > 0) return
-
-    if (mode === MODES.focus) {
-      setCompletedFocusSessions((previous) => {
-        const next = previous + 1
-        setMode(next % 4 === 0 ? MODES.long : MODES.short)
-        return next
-      })
-    } else {
-      setMode(MODES.focus)
-    }
-
-    setRunning(false)
-  }, [mode, running, secondsLeft])
+  }, [endTimeMs, mode, running])
 
   function selectMode(nextMode) {
     setMode(nextMode)
     setRunning(false)
+    setEndTimeMs(null)
   }
 
   function resetCurrent() {
     setRunning(false)
+    setEndTimeMs(null)
     setSecondsLeft(durations[mode])
   }
 
   function updateMinutes(setter, nextValue) {
     if (Number.isNaN(nextValue)) return
     setter(Math.min(120, Math.max(1, nextValue)))
+  }
+
+  function toggleTimer() {
+    if (running) {
+      const remaining = endTimeMs ? Math.max(0, Math.ceil((endTimeMs - Date.now()) / 1000)) : secondsLeft
+      setRunning(false)
+      setEndTimeMs(null)
+      setSecondsLeft(remaining)
+      return
+    }
+
+    const startFrom = secondsLeft > 0 ? secondsLeft : durations[mode]
+    setSecondsLeft(startFrom)
+    setEndTimeMs(Date.now() + startFrom * 1000)
+    setRunning(true)
   }
 
   return (
@@ -139,7 +161,7 @@ function PomodoroPage() {
             <button
               type="button"
               className="pomodoro__primary"
-              onClick={() => setRunning((previous) => !previous)}
+              onClick={toggleTimer}
             >
               {running ? 'Pause' : 'Start'}
             </button>
