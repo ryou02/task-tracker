@@ -4,11 +4,48 @@
 
 .app-shell__content {
   padding-left: 250px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    linear-gradient(var(--app-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px),
+    var(--app-bg);
+  background-size: 32px 32px, 32px 32px, auto;
+}
+
+.app-shell__zoom-wrap {
+  --app-shell-zoom: 0.95;
+  min-height: calc(100vh / var(--app-shell-zoom));
+  zoom: 95%;
+}
+
+@supports not (zoom: 1) {
+  .app-shell__zoom-wrap {
+    transform: scale(var(--app-shell-zoom));
+    transform-origin: top left;
+    width: calc(100% / var(--app-shell-zoom));
+  }
+}
+
+.app-shell__zoom-wrap > main {
+  min-height: calc(100vh / var(--app-shell-zoom));
 }
 
 @media (max-width: 900px) {
   .app-shell__content {
     padding-left: 0;
     padding-bottom: 86px;
+  }
+
+  .app-shell__zoom-wrap {
+    zoom: 100%;
+    transform: none;
+    width: 100%;
+    --app-shell-zoom: 1;
+    min-height: auto;
+  }
+
+  .app-shell__zoom-wrap > main {
+    min-height: auto;
   }
 }

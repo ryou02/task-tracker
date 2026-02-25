@@ -8,7 +8,9 @@ function AppShell() {
     <div className="app-shell">
       <SideNavbar />
       <main className="app-shell__content">
-        <Outlet />
+        <div className="app-shell__zoom-wrap">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
