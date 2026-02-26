@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import chatbotAvatar from '../assets/chatbot.jpg'
 import sendIcon from '../assets/send.png'
 import { useAuth } from '../context/AuthProvider'
@@ -30,9 +30,17 @@ function AgentChatWidget() {
   const [messages, setMessages] = useState(seedMessages)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const messagesRef = useRef(null)
   const userAvatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null
   const userEmail = user?.email || ''
   const userInitial = userEmail.trim()?.[0]?.toUpperCase() || 'U'
+
+  useEffect(() => {
+    if (isMinimized) return
+    const node = messagesRef.current
+    if (!node) return
+    node.scrollTop = node.scrollHeight
+  }, [isMinimized, messages, sending])
 
   async function handleSend(event) {
     event.preventDefault()
@@ -136,7 +144,7 @@ function AgentChatWidget() {
         </button>
       </header>
 
-      <div className="agent-chat-widget__messages">
+      <div className="agent-chat-widget__messages" ref={messagesRef}>
         {messages.map((message) => (
           <article
             key={message.id}

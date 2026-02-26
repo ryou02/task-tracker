@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
+import AgentChatWidget from './AgentChatWidget.jsx'
 import SideNavbar from './SideNavbar.jsx'
 import './AppShell.css'
 
@@ -12,6 +13,7 @@ function AppShell() {
           <Outlet />
         </div>
       </main>
+      <AgentChatWidget />
     </div>
   )
 }
