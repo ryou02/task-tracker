@@ -4,6 +4,8 @@ import sendIcon from '../assets/send.png'
 import { useAuth } from '../context/AuthProvider'
 import './AgentChatWidget.css'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim() || 'http://localhost:8080'
+
 const seedMessages = [
   {
     id: 1,
@@ -23,32 +25,78 @@ const seedMessages = [
 ]
 
 function AgentChatWidget() {
-  const { user } = useAuth()
+  const { user, session } = useAuth()
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState(seedMessages)
   const [input, setInput] = useState('')
+  const [sending, setSending] = useState(false)
   const userAvatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null
   const userEmail = user?.email || ''
   const userInitial = userEmail.trim()?.[0]?.toUpperCase() || 'U'
 
-  function handleSend(event) {
+  async function handleSend(event) {
     event.preventDefault()
     const next = input.trim()
-    if (!next) return
+    if (!next || sending) return
 
     const userMessage = {
       id: Date.now(),
       role: 'user',
       text: next,
     }
-    const botMessage = {
-      id: Date.now() + 1,
-      role: 'assistant',
-      text: 'Demo mode: backend not connected yet.',
+    setMessages((previous) => [...previous, userMessage])
+    setInput('')
+    setSending(true)
+
+    const accessToken = session?.access_token
+    if (!accessToken) {
+      setMessages((previous) => [
+        ...previous,
+        {
+          id: Date.now() + 1,
+          role: 'assistant',
+          text: 'No auth token found. Please sign in again and retry.',
+        },
+      ])
+      setSending(false)
+      return
     }
 
-    setMessages((previous) => [...previous, userMessage, botMessage])
-    setInput('')
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ message: next }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(data?.error || 'Request failed.')
+      }
+
+      setMessages((previous) => [
+        ...previous,
+        {
+          id: Date.now() + 1,
+          role: 'assistant',
+          text: typeof data?.reply === 'string' ? data.reply : 'No reply received.',
+        },
+      ])
+    } catch (error) {
+      setMessages((previous) => [
+        ...previous,
+        {
+          id: Date.now() + 1,
+          role: 'assistant',
+          text: error instanceof Error ? error.message : 'Agent request failed.',
+        },
+      ])
+    } finally {
+      setSending(false)
+    }
   }
 
   if (isMinimized) {
@@ -122,17 +170,34 @@ function AgentChatWidget() {
             ) : null}
           </article>
         ))}
+        {sending ? (
+          <article className="agent-chat-widget__message-row agent-chat-widget__message-row--assistant">
+            <img
+              src={chatbotAvatar}
+              alt=""
+              className="agent-chat-widget__avatar agent-chat-widget__avatar--assistant"
+            />
+            <p className="agent-chat-widget__message agent-chat-widget__message--assistant">Thinking...</p>
+          </article>
+        ) : null}
       </div>
 
       <form className="agent-chat-widget__composer" onSubmit={handleSend}>
         <input
+          className="agent-chat-widget__composer-input"
           type="text"
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="Type a message..."
+          placeholder="Ask anything"
           aria-label="Chat message"
+          disabled={sending}
         />
-        <button type="submit" className="agent-chat-widget__send" aria-label="Send message">
+        <button
+          type="submit"
+          className="agent-chat-widget__composer-send"
+          aria-label="Send message"
+          disabled={sending}
+        >
           <img src={sendIcon} alt="" />
         </button>
       </form>

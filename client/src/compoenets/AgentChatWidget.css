@@ -167,54 +167,76 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 8px 10px;
   border-top: 1px solid var(--app-border);
-  background: color-mix(in srgb, var(--app-panel) 88%, white 12%);
-  border-radius: 0 0 16px 16px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--app-panel) 88%, var(--app-strip) 12%),
+    color-mix(in srgb, var(--app-panel) 78%, var(--app-strip-2) 22%)
+  );
+  border-radius: 999px;
+  margin: 8px;
+  box-shadow:
+    inset 0 0 0 1px var(--app-border),
+    0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.agent-chat-widget__composer input {
+.agent-chat-widget__composer-input {
   flex: 1;
   width: 100%;
-  border: 1px solid var(--app-border-strong);
+  border: none;
   border-radius: 999px;
-  padding: 11px 14px;
-  background: var(--app-panel);
+  padding: 10px 4px;
+  background: transparent;
   color: var(--app-text);
   font: inherit;
   font-weight: 400;
 }
 
-.agent-chat-widget__send {
-  flex: 0 0 50px;
-  width: 50px;
-  height: 50px;
+.agent-chat-widget__composer-input::placeholder {
+  color: var(--app-soft);
+}
+
+.agent-chat-widget__composer-input:focus {
+  outline: none;
+}
+
+.agent-chat-widget__composer-send {
+  width: 34px;
+  height: 34px;
   border: none;
   border-radius: 50%;
   padding: 0;
-  background: var(--app-accent);
+  background: var(--app-strip-2);
+  color: var(--app-text);
   cursor: pointer;
   display: grid;
   place-items: center;
-  transition: transform 170ms ease, box-shadow 190ms ease, background-color 190ms ease;
+  transition: transform 170ms ease, box-shadow 190ms ease;
 }
 
-.agent-chat-widget__send:hover {
-  transform: translateY(-1px) scale(1.06);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
-  background: var(--app-accent-deep);
+.agent-chat-widget__composer-send:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
 }
 
-.agent-chat-widget__send:active {
+.agent-chat-widget__composer-send:active {
   transform: scale(0.95);
 }
 
-.agent-chat-widget__send img {
-  width: 26px;
-  height: 26px;
+.agent-chat-widget__composer-send:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+}
+
+.agent-chat-widget__composer-send img {
+  width: 18px;
+  height: 18px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
   display: block;
+  filter: none;
 }
 
 .agent-chat-widget__fab {
@@ -273,6 +295,7 @@
     transform: translateY(0) scale(1);
   }
 }
+
 
 @media (max-width: 900px) {
   .agent-chat-widget {
